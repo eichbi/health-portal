@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Button from '../ui/Button'
 import { storage } from '../../services/storage'
+import { XP_VALUES, calculateLevel } from '../../features/gamification/logic'
 
 const VitalsForm = ({ onClose, onSave }) => {
     const [type, setType] = useState('weight')
@@ -24,6 +25,14 @@ const VitalsForm = ({ onClose, onSave }) => {
         const existing = storage.get('health_data') || []
         const updated = [...existing, record]
         storage.set('health_data', updated)
+
+        // Award XP
+        const profile = storage.get('user_profile')
+        if (profile) {
+            const newXP = (profile.xp || 0) + XP_VALUES.LOG_VITALS
+            const newLevel = calculateLevel(newXP)
+            storage.set('user_profile', { ...profile, xp: newXP, level: newLevel })
+        }
 
         onSave()
         onClose()

@@ -8,12 +8,16 @@ import GoalForm from './components/forms/GoalForm'
 import Chart from './components/charts/Chart'
 import ProgressBar from './components/ui/ProgressBar'
 import Badge from './components/ui/Badge'
+import OnboardingModal from './components/ui/OnboardingModal'
 import { storage } from './services/storage'
 import { checkGoalStatus, defaultGoals } from './features/goals/logic'
+import { calculateLevel, calculateProgressToNextLevel } from './features/gamification/logic'
 
 function App() {
     const [activeTab, setActiveTab] = useState('dashboard')
     const [showImport, setShowImport] = useState(false)
+    const [showOnboarding, setShowOnboarding] = useState(false)
+    const [userProfile, setUserProfile] = useState(null)
     const [showVitalsForm, setShowVitalsForm] = useState(false)
     const [showMedForm, setShowMedForm] = useState(false)
     const [editingGoal, setEditingGoal] = useState(null)
@@ -26,6 +30,14 @@ function App() {
     const [medications, setMedications] = useState([])
 
     const loadData = () => {
+        const profile = storage.get('user_profile')
+        if (!profile) {
+            setShowOnboarding(true)
+        } else {
+            setUserProfile(profile)
+            setShowOnboarding(false)
+        }
+
         const stored = storage.get('health_data') || []
         const meds = storage.get('medications') || []
         const userGoals = storage.get('user_goals') || {}
@@ -113,7 +125,24 @@ function App() {
     return (
         <div className="container">
             <header style={{ padding: '2rem 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Health<span style={{ color: 'var(--primary)' }}>Portal</span></h1>
+                <div>
+                    <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>
+                        {userProfile ? `Hola, ${userProfile.name}!` : 'HealthPortal'}
+                    </h1>
+                    {userProfile && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
+                            <Badge variant="warning">Lvl {userProfile.level}</Badge>
+                            <div style={{ width: '100px', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}>
+                                <div style={{
+                                    width: `${calculateProgressToNextLevel(userProfile.xp)}%`,
+                                    height: '100%',
+                                    background: 'var(--oxxo-yellow)',
+                                    borderRadius: '3px'
+                                }} />
+                            </div>
+                        </div>
+                    )}
+                </div>
                 <nav style={{ display: 'flex', gap: '1rem', overflowX: 'auto' }}>
                     {['dashboard', 'vitals', 'goals', 'medications'].map(tab => (
                         <button
@@ -253,6 +282,7 @@ function App() {
             </main>
 
             {showImport && <ImportModal onClose={() => setShowImport(false)} onImportComplete={loadData} />}
+            {showOnboarding && <OnboardingModal onComplete={loadData} />}
             {showVitalsForm && <VitalsForm onClose={() => setShowVitalsForm(false)} onSave={loadData} />}
             {showMedForm && <MedicationForm onClose={() => setShowMedForm(false)} onSave={loadData} />}
             {editingGoal && <GoalForm goal={editingGoal} onClose={() => setEditingGoal(null)} onSave={handleUpdateGoal} />}

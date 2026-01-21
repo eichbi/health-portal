@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Button from '../ui/Button'
 import { storage } from '../../services/storage'
+import { XP_VALUES, calculateLevel } from '../../features/gamification/logic'
 
 const MedicationForm = ({ onClose, onSave }) => {
     const [name, setName] = useState('')
@@ -9,6 +10,15 @@ const MedicationForm = ({ onClose, onSave }) => {
 
     const handleSubmit = () => {
         if (!name) return
+
+        const existing = storage.get('medications') || []
+
+        // Validation: Check for duplicates
+        const isDuplicate = existing.some(m => m.name.toLowerCase() === name.toLowerCase())
+        if (isDuplicate) {
+            alert('¡Esta medicación ya existe!')
+            return
+        }
 
         const med = {
             id: `med_${Date.now()}`,
@@ -20,9 +30,16 @@ const MedicationForm = ({ onClose, onSave }) => {
         }
 
         // Save to storage
-        const existing = storage.get('medications') || []
         const updated = [...existing, med]
         storage.set('medications', updated)
+
+        // Award XP
+        const profile = storage.get('user_profile')
+        if (profile) {
+            const newXP = (profile.xp || 0) + XP_VALUES.ADD_MED
+            const newLevel = calculateLevel(newXP)
+            storage.set('user_profile', { ...profile, xp: newXP, level: newLevel })
+        }
 
         onSave()
         onClose()
