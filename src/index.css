@@ -1,30 +1,26 @@
 :root {
-  /* Oxxo Theme Palette */
-  --oxxo-red: #da291c;
-  /* Official-ish Red */
-  --oxxo-yellow: #ffc400;
-  /* Official-ish Yellow */
-  --oxxo-white: #ffffff;
+  /* Dark Mode Palette */
+  --bg-dark: #0f172a;
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 
-  --primary: var(--oxxo-red);
-  --primary-hover: #b91d12;
-  --secondary: var(--oxxo-yellow);
+  /* Text */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
 
-  --bg-dark: #121212;
-  --bg-card: #1e1e1e;
-
-  --text-primary: #ffffff;
-  --text-secondary: #aaaaaa;
-
-  --success: #2eca7f;
-  --warning: var(--oxxo-yellow);
-  --error: #ef4444;
-
-  --glass-bg: rgba(30, 30, 30, 0.85);
-  /* Darker for better contrast with red */
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-highlight: rgba(218, 41, 28, 0.15);
-  /* Red tint highlight */
+  --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --glass-highlight: rgba(255, 255, 255, 0.08);
+
+  /* Brand Colors */
+  --primary: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.5);
+  --accent: #8b5cf6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
 }
 
 body {
