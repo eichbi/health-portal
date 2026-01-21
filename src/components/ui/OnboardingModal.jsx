@@ -51,10 +51,9 @@ const OnboardingModal = ({ onComplete }) => {
                 width: '400px',
                 maxWidth: '90%',
                 background: '#1e293b',
-                border: '1px solid var(--oxxo-yellow)', // Oxxo accent
                 textAlign: 'center'
             }}>
-                <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', color: 'var(--oxxo-red)' }}>
+                <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', background: 'linear-gradient(to right, var(--primary), var(--accent))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                     {step === 1 ? '¡Hola!' : 'Mis Metas'}
                 </h2>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
@@ -100,7 +99,7 @@ const OnboardingModal = ({ onComplete }) => {
                 <Button
                     variant="primary"
                     size="lg"
-                    style={{ width: '100%', background: 'var(--oxxo-red)', color: 'white' }}
+                    style={{ width: '100%' }}
                     onClick={handleNext}
                     disabled={step === 1 && !name.trim()}
                 >

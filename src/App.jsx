@@ -131,12 +131,12 @@ function App() {
                     </h1>
                     {userProfile && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
-                            <Badge variant="warning">Lvl {userProfile.level}</Badge>
+                            <Badge variant="accent">Lvl {userProfile.level}</Badge>
                             <div style={{ width: '100px', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px' }}>
                                 <div style={{
                                     width: `${calculateProgressToNextLevel(userProfile.xp)}%`,
                                     height: '100%',
-                                    background: 'var(--oxxo-yellow)',
+                                    background: 'var(--accent)',
                                     borderRadius: '3px'
                                 }} />
                             </div>
