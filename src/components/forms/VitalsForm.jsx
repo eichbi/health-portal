@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Button from '../ui/Button'
 import { storage } from '../../services/storage'
+import OCRScanner from '../ui/OCRScanner'
 import { XP_VALUES, calculateLevel } from '../../features/gamification/logic'
 
 const VitalsForm = ({ onClose, onSave }) => {
@@ -49,28 +50,36 @@ const VitalsForm = ({ onClose, onSave }) => {
 
                 <div style={{ marginBottom: '1rem' }}>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Type</label>
-                    <select
-                        value={type} onChange={e => setType(e.target.value)}
-                        style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}
-                    >
-                        <option value="weight">Weight (kg)</option>
-                        <option value="sleep">Sleep (hrs)</option>
-                        <option value="heart_rate">Heart Rate (bpm)</option>
-                        <option value="steps">Steps</option>
-                        <option value="glucose">Glucose (mg/dL)</option>
-                    </select>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                        <select
+                            value={type} onChange={e => setType(e.target.value)}
+                            style={{ flex: 1, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}
+                        >
+                            <option value="weight">Weight (kg)</option>
+                            <option value="sleep">Sleep (hrs)</option>
+                            <option value="heart_rate">Heart Rate (bpm)</option>
+                            <option value="steps">Steps</option>
+                            <option value="glucose">Glucose (mg/dL)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div style={{ marginBottom: '1rem' }}>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
                         Value {type === 'heart_rate' ? '(bpm)' : type === 'steps' ? '' : type === 'glucose' ? '(mg/dL)' : type === 'weight' ? '(kg)' : '(hrs)'}
                     </label>
+                    <OCRScanner
+                        onScanComplete={(val) => setValue(val)}
+                        label={`Scan ${type === 'weight' ? 'Scale' : type}`}
+                    />
                     <input
                         type="number"
+                        inputMode="decimal"
                         step={type === 'steps' || type === 'heart_rate' ? '1' : '0.1'}
                         value={value}
                         onChange={e => setValue(e.target.value)}
-                        style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}
+                        placeholder="0.0"
+                        style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', fontSize: '1.2rem' }}
                     />
                 </div>
 
