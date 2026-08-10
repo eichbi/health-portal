@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ink: #0b1220;
+  --color-ink-soft: #475569;
+  --color-ink-faint: #7c8899;
+  --color-surface: #ffffff;
+  --color-canvas: #f2f4f7;
+  --color-line: #dfe3ea;
+
+  --color-ok: #15803d;
+  --color-ok-bg: #dcfce7;
+  --color-warn: #b45309;
+  --color-warn-bg: #fef3c7;
+  --color-bad: #b91c1c;
+  --color-bad-bg: #fee2e2;
+  --color-idle: #64748b;
+  --color-idle-bg: #eef1f5;
+
+  --color-brand: #0f766e;
+  --color-brand-soft: #ccfbf1;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Se usa post-entreno: nada de tipografía pequeña. */
+  font-size: 17px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+/* Los inputs bajo 16px hacen que iOS haga zoom al enfocar. */
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+  font-size: 17px;
+}
+
+/* Quita las flechas de los number inputs: se captura con teclado numérico. */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+@utility card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+}
+
+@utility tap {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    font-size: 12px;
+  }
+}
