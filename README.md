@@ -111,8 +111,10 @@ actions que revalidan el layout. No hay API REST intermedia.
 - **El peso de la vista Tendencias es media móvil de 7 días** para separar ruido de
   tendencia real.
 
-- **Los documentos nunca exponen su URL de almacenamiento.** El binario vive en Vercel Blob,
-  pero el navegador sólo ve `/api/documentos/<id>`, que pasa por el middleware de sesión.
+- **Los documentos son privados por dos vías.** Se suben a Vercel Blob con
+  `access: 'private'`, así que su URL de almacenamiento no responde sin el token del store;
+  y el navegador ni siquiera la ve, porque sólo recibe `/api/documentos/<id>`, una ruta que
+  pasa por el middleware de sesión.
 
 ## Fuera de alcance en esta versión
 

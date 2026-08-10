@@ -58,10 +58,10 @@ export async function uploadDocument(_prev: ActionState, formData: FormData): Pr
       throw new ValidationError('La fecha del documento no es válida.');
     }
 
-    // `addRandomSuffix` hace la ruta impredecible; además nunca se expone al
-    // navegador, que sólo ve /api/documentos/<id>.
+    // Blob privado: la URL por sí sola no sirve, hay que presentar el token
+    // del store. El portal lo hace desde el servidor en /api/documentos/<id>.
     const blob = await put(`documentos/${file.name}`, file, {
-      access: 'public',
+      access: 'private',
       addRandomSuffix: true,
       contentType: file.type,
       token,
@@ -93,7 +93,7 @@ export async function deleteDocument(_prev: ActionState, formData: FormData): Pr
     if (token) {
       // Si el borrado del blob falla, la fila se borra igual: un archivo
       // huérfano molesta menos que un registro que no se puede quitar.
-      await del(row.blobUrl, { token }).catch(() => {});
+      await del(row.blobPathname, { token }).catch(() => {});
     }
 
     await db.delete(documents).where(eq(documents.id, id));

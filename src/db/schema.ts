@@ -129,8 +129,9 @@ export const documentKindEnum = pgEnum('document_kind', DOCUMENT_KINDS);
 
 /**
  * Archivos de respaldo (el plan en PDF, resultados de laboratorio escaneados…).
- * El binario vive en Vercel Blob; aquí sólo queda la referencia. La URL del blob
- * nunca se manda al navegador: se sirve a través de una ruta que exige sesión.
+ * El binario vive en Vercel Blob con acceso privado; aquí sólo queda la
+ * referencia. El navegador nunca ve la URL del blob: se sirve por una ruta que
+ * exige sesión y que lee el archivo con el token del store.
  */
 export const documents = pgTable('documents', {
   id: serial('id').primaryKey(),
