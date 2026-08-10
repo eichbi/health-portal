@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { WORKOUT_TYPES, type WorkoutType } from '@/db/schema';
+import { DEFAULT_WEEKLY_TEMPLATE, REST, type PlannedDay } from '@/lib/defaults';
 import { DEFAULT_WORKOUT_LABELS } from '@/lib/defaults';
 import { writeSettings } from '@/lib/settings';
 import {
@@ -56,6 +57,16 @@ export async function saveSettings(_prev: ActionState, formData: FormData): Prom
       if (value) labels[type] = value.slice(0, 60);
     }
 
+    const allowed = new Set<string>([...WORKOUT_TYPES, REST]);
+    const template: PlannedDay[] = [];
+    for (let index = 0; index < 7; index++) {
+      const value = String(formData.get(`template_${index}`) ?? '');
+      if (!allowed.has(value)) {
+        throw new ValidationError('La plantilla semanal tiene un día no válido.');
+      }
+      template.push(value as PlannedDay);
+    }
+
     await writeSettings({
       goal_steps: String(
         requiredNumber(formData, 'goalSteps', 'La meta de pasos', {
@@ -88,6 +99,7 @@ export async function saveSettings(_prev: ActionState, formData: FormData): Prom
       date_challenge_end: requiredDate(formData, 'dateChallengeEnd'),
       plan_start: requiredDate(formData, 'planStart'),
       workout_labels: JSON.stringify(labels),
+      weekly_template: JSON.stringify(template.length === 7 ? template : DEFAULT_WEEKLY_TEMPLATE),
     });
 
     revalidatePath('/', 'layout');

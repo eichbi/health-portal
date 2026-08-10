@@ -24,9 +24,13 @@ defecto y los 8 suplementos sólo si faltan.
 ## Deploy en Vercel
 
 1. Importa el repo en Vercel.
-2. Conecta una base **Vercel Postgres (Neon)** al proyecto — inyecta `POSTGRES_URL` sola.
+2. Conecta una base **Vercel Postgres (Neon)** al proyecto con el prefijo `POSTGRES`,
+   para que la variable quede como `POSTGRES_URL` (también se acepta `DATABASE_URL`).
 3. Agrega la variable de entorno `ACCESS_PASSWORD`.
-4. Deploy.
+4. Opcional: crea un store de **Vercel Blob** (inyecta `BLOB_READ_WRITE_TOKEN`) para
+   habilitar la sección Documentos. Sin él, el resto del portal funciona igual y
+   Documentos avisa que falta conectarlo.
+5. Deploy.
 
 El comando de build es `npm run db:migrate && next build`, así que **las migraciones y el
 seed corren solos en cada deploy**. No hace falta ningún paso manual más allá de las dos
@@ -61,7 +65,8 @@ cerrado y `/login` lo explica: falla cerrado, no abierto.
 ```
 src/
   app/
-    (portal)/            Hoy · Semana · Tendencias · Labs · Config
+    (portal)/            Hoy · Plan · Semana · Tendencias · Labs · Config
+    api/documentos/      Sirve los archivos de Blob detrás de la sesión
     login/               Pantalla de acceso y server actions de sesión
     manifest.ts          Manifest de la PWA
   actions/               Server actions (mutaciones), una por dominio
@@ -69,6 +74,7 @@ src/
   db/                    Esquema Drizzle, cliente, migración y seed
   lib/
     date.ts              Fechas civiles en Monterrey; duración de sueño
+    plan.ts              El Plan Metabólico transcrito del PDF
     status.ts            Semáforos del día
     rules.ts             Reglas de secuencia de entrenos
     labs.ts              HOMA-IR y tendencias de marcadores
@@ -85,10 +91,15 @@ actions que revalidan el layout. No hay API REST intermedia.
 
 ## Decisiones que conviene conocer
 
-- **Las etiquetas de los tipos de entreno A–E son marcadores de posición.** El PRD nombra
-  los tipos pero no su contenido, así que se sembraron nombres genéricos y se editan en
-  **Config → Nombres de los tipos de entreno**. Lo que sí es fijo son las reglas de
-  secuencia: C↔D y A↔E no pueden caer en días consecutivos, y la vista Semana lo avisa.
+- **El plan vive dentro del portal.** `src/lib/plan.ts` es la transcripción del Plan
+  Metabólico (las 5 sesiones con sus ejercicios, cargas y notas técnicas; fases; semana de
+  la extracción; calorías; suplementos). La sección **Plan** lo muestra y **Hoy** dice qué
+  toca, así que no hace falta abrir el PDF. Si el plan cambia, se edita ese archivo.
+- **La plantilla semanal por defecto es `A · D · descanso · C · B · E · descanso`.** El plan
+  sugiere la secuencia A → D → C → B → E con "2 días de descanso donde acomode", pero leída
+  como días corridos rompería su propia regla de no poner C y D juntos. Los descansos van en
+  miércoles y domingo porque es la colocación que respeta las reglas duras; hay una prueba
+  que lo verifica. Se edita en **Config → Qué toca cada día**.
 - **Un día sin entreno se pinta neutro, no rojo.** La meta es 5 entrenos por semana: los
   días de descanso son parte del plan y marcarlos en rojo entrenaría a ignorar el semáforo.
 - **Sin dato ≠ cero.** Las gráficas cortan la línea donde no hay registro (R6) y los
@@ -100,8 +111,12 @@ actions que revalidan el layout. No hay API REST intermedia.
 - **El peso de la vista Tendencias es media móvil de 7 días** para separar ruido de
   tendencia real.
 
+- **Los documentos nunca exponen su URL de almacenamiento.** El binario vive en Vercel Blob,
+  pero el navegador sólo ve `/api/documentos/<id>`, que pasa por el middleware de sesión.
+
 ## Fuera de alcance en esta versión
 
-P1 y P2 del PRD siguen pendientes: importación y exportación CSV/JSON, racha de días
-completos, modo oscuro, vista imprimible para la cita, integraciones con wearables,
-presión arterial y notificaciones push.
+P1 y P2 del PRD siguen pendientes: **leer resultados desde una foto, un CSV o un PDF
+subido** (import de Withings/SECA era P1), exportación CSV/JSON, racha de días completos,
+modo oscuro, vista imprimible para la cita, integraciones con wearables, presión arterial y
+notificaciones push.

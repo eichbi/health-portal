@@ -13,15 +13,18 @@ export function WorkoutForm({
   date,
   labels,
   workout,
+  initialType,
   onDone,
 }: {
   date: string;
   labels: Record<WorkoutType, string>;
   workout?: Workout;
+  /** Tipo que toca hoy según el plan, para abrir el formulario ya resuelto. */
+  initialType?: WorkoutType;
   onDone?: () => void;
 }) {
   const [state, formAction] = useActionState<ActionState, FormData>(saveWorkout, {});
-  const [type, setType] = useState<WorkoutType>(workout?.type ?? 'A');
+  const [type, setType] = useState<WorkoutType>(workout?.type ?? initialType ?? 'A');
   const [rpe, setRpe] = useState<number>(workout?.rpe ?? 7);
 
   useEffect(() => {
@@ -71,7 +74,8 @@ export function WorkoutForm({
           inputMode="numeric"
           min={1}
           max={600}
-          defaultValue={workout?.durationMin ?? 45}
+          /* Todas las sesiones del plan son de 40 min. */
+          defaultValue={workout?.durationMin ?? 40}
           required
         />
       </Field>
@@ -98,13 +102,21 @@ export function WorkoutForm({
       </div>
 
       {ROUNDS_RELEVANT_TYPES.includes(type) && (
-        <Field label="Rondas completadas" hint="Opcional">
+        <Field
+          label="Rondas completadas"
+          hint={
+            type === 'E'
+              ? 'AMRAP de 30 min — es la métrica de progreso semana a semana'
+              : 'El plan marca 4 rondas'
+          }
+        >
           <TextInput
             type="number"
             name="rounds"
             inputMode="numeric"
             min={0}
             max={100}
+            placeholder={type === 'E' ? '' : '4'}
             defaultValue={workout?.rounds ?? ''}
           />
         </Field>

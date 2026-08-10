@@ -2,7 +2,14 @@ import { sql } from 'drizzle-orm';
 import { cache } from 'react';
 import { db } from '@/db';
 import { settings as settingsTable, type WorkoutType } from '@/db/schema';
-import { DEFAULT_WORKOUT_LABELS, SETTINGS_DEFAULTS, type SettingKey } from './defaults';
+import {
+  DEFAULT_WEEKLY_TEMPLATE,
+  DEFAULT_WORKOUT_LABELS,
+  REST,
+  SETTINGS_DEFAULTS,
+  type PlannedDay,
+  type SettingKey,
+} from './defaults';
 import { isISODate, type ISODate } from './date';
 
 export type AppSettings = {
@@ -19,6 +26,8 @@ export type AppSettings = {
   dateChallengeEnd: ISODate;
   planStart: ISODate;
   workoutLabels: Record<WorkoutType, string>;
+  /** Índice 0 = lunes. */
+  weeklyTemplate: PlannedDay[];
 };
 
 function num(raw: Record<string, string>, key: SettingKey): number {
@@ -45,6 +54,21 @@ function labels(raw: Record<string, string>): Record<WorkoutType, string> {
   }
 }
 
+const VALID_PLANNED = new Set<string>(['A', 'B', 'C', 'D', 'E', 'OTHER', REST]);
+
+function weeklyTemplate(raw: Record<string, string>): PlannedDay[] {
+  try {
+    const parsed: unknown = JSON.parse(raw.weekly_template ?? '[]');
+    if (!Array.isArray(parsed) || parsed.length !== 7) return [...DEFAULT_WEEKLY_TEMPLATE];
+    if (!parsed.every((day) => typeof day === 'string' && VALID_PLANNED.has(day))) {
+      return [...DEFAULT_WEEKLY_TEMPLATE];
+    }
+    return parsed as PlannedDay[];
+  } catch {
+    return [...DEFAULT_WEEKLY_TEMPLATE];
+  }
+}
+
 /** Cacheado por request: el dashboard lo consulta desde varios componentes. */
 export const getSettings = cache(async (): Promise<AppSettings> => {
   const rows = await db.select().from(settingsTable);
@@ -64,6 +88,7 @@ export const getSettings = cache(async (): Promise<AppSettings> => {
     dateChallengeEnd: iso(raw, 'date_challenge_end'),
     planStart: iso(raw, 'plan_start'),
     workoutLabels: labels(raw),
+    weeklyTemplate: weeklyTemplate(raw),
   };
 });
 

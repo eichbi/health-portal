@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const ITEMS = [
   { href: '/', label: 'Hoy' },
+  { href: '/plan', label: 'Plan' },
   { href: '/semana', label: 'Semana' },
   { href: '/tendencias', label: 'Tendencias' },
   { href: '/labs', label: 'Labs' },
@@ -24,13 +25,13 @@ export function BottomNav() {
               <Link
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`tap flex flex-col items-center gap-0.5 py-2.5 text-[13px] font-semibold ${
+                className={`tap flex flex-col items-center gap-0.5 px-0.5 py-2.5 text-[11px] font-semibold ${
                   active ? 'text-brand' : 'text-ink-faint'
                 }`}
               >
                 <span
                   aria-hidden
-                  className={`h-1 w-8 rounded-full ${active ? 'bg-brand' : 'bg-transparent'}`}
+                  className={`h-1 w-6 rounded-full ${active ? 'bg-brand' : 'bg-transparent'}`}
                 />
                 {item.label}
               </Link>
