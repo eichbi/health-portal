@@ -122,6 +122,30 @@ export const settings = pgTable('settings', {
   value: text('value').notNull(),
 });
 
+export const DOCUMENT_KINDS = ['PLAN', 'LAB', 'SECA', 'OTHER'] as const;
+export type DocumentKind = (typeof DOCUMENT_KINDS)[number];
+
+export const documentKindEnum = pgEnum('document_kind', DOCUMENT_KINDS);
+
+/**
+ * Archivos de respaldo (el plan en PDF, resultados de laboratorio escaneados…).
+ * El binario vive en Vercel Blob; aquí sólo queda la referencia. La URL del blob
+ * nunca se manda al navegador: se sirve a través de una ruta que exige sesión.
+ */
+export const documents = pgTable('documents', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  kind: documentKindEnum('kind').notNull().default('OTHER'),
+  filename: text('filename').notNull(),
+  contentType: text('content_type').notNull(),
+  sizeBytes: integer('size_bytes').notNull(),
+  blobUrl: text('blob_url').notNull(),
+  blobPathname: text('blob_pathname').notNull(),
+  docDate: date('doc_date'),
+  notes: text('notes'),
+  uploadedAt: timestamp('uploaded_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 export type Workout = typeof workouts.$inferSelect;
 export type SleepLog = typeof sleepLogs.$inferSelect;
 export type DailyMetric = typeof dailyMetrics.$inferSelect;
@@ -130,3 +154,4 @@ export type SupplementLog = typeof supplementLogs.$inferSelect;
 export type LabPanel = typeof labPanels.$inferSelect;
 export type LabResult = typeof labResults.$inferSelect;
 export type SecaMeasurement = typeof secaMeasurements.$inferSelect;
+export type StoredDocument = typeof documents.$inferSelect;

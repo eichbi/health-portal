@@ -11,6 +11,7 @@ import {
   startOfWeek,
   todayISO,
 } from '@/lib/date';
+import { REST } from '@/lib/defaults';
 import { getWeek } from '@/lib/queries/week';
 import { getSettings } from '@/lib/settings';
 
@@ -52,6 +53,14 @@ export default async function WeekPage({
           {week.days.map((day, index) => {
             const isToday = day.date === today;
             const types = day.workouts.map((w) => (w.type === 'OTHER' ? '·' : w.type));
+            const planned = settings.weeklyTemplate[index] ?? REST;
+            // Un hueco es un día planeado que ya pasó sin registro. Antes del
+            // arranque del plan no se le debe nada a nadie: ahí no hay huecos.
+            const missed =
+              types.length === 0 &&
+              planned !== REST &&
+              day.date < today &&
+              day.date >= settings.planStart;
             return (
               <li key={day.date} className="text-center">
                 <p className="text-[12px] font-medium text-ink-faint">{WEEKDAY_LABELS[index]}</p>
@@ -79,7 +88,14 @@ export default async function WeekPage({
                       '–'
                     )}
                   </div>
-                  <p className="mt-1 text-[11px] tabular-nums text-ink-faint">
+                  <p
+                    className={`mt-1 text-[11px] leading-tight ${
+                      missed ? 'font-bold text-bad' : 'text-ink-faint'
+                    }`}
+                  >
+                    {planned === REST ? '·' : planned}
+                  </p>
+                  <p className="text-[11px] tabular-nums text-ink-faint">
                     {Number(day.date.slice(8))}
                   </p>
                 </div>

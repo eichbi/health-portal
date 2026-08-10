@@ -1,11 +1,13 @@
 import { Countdowns } from '@/components/Countdowns';
 import { DayTiles } from '@/components/DayTiles';
+import { PlannedToday } from '@/components/PlannedToday';
 import { QuickAdd } from '@/components/QuickAdd';
 import { SupplementChecklist } from '@/components/SupplementChecklist';
 import { WorkoutList } from '@/components/WorkoutList';
 import { Card } from '@/components/ui';
 import { endOfWeek, formatFull, startOfWeek, todayISO } from '@/lib/date';
 import { countWorkoutDays, getDay } from '@/lib/queries/day';
+import { plannedFor } from '@/lib/plan';
 import { getSettings } from '@/lib/settings';
 import { buildDayTiles } from '@/lib/status';
 
@@ -19,6 +21,8 @@ export default async function TodayPage() {
 
   const tiles = buildDayTiles(day, settings);
   const goal = settings.goalWorkoutsPerWeek;
+  const planned = plannedFor(today, settings.weeklyTemplate);
+  const plannedDone = day.workouts.some((workout) => workout.type === planned);
   const pct = goal > 0 ? Math.min(100, Math.round((trainedThisWeek / goal) * 100)) : 0;
 
   return (
@@ -30,6 +34,13 @@ export default async function TodayPage() {
         </div>
         <span className="text-[13px] font-semibold text-ink-faint">FitTrack</span>
       </header>
+
+      <PlannedToday
+        date={today}
+        planned={planned}
+        labels={settings.workoutLabels}
+        done={plannedDone}
+      />
 
       <DayTiles tiles={tiles} />
 

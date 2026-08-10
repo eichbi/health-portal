@@ -3,21 +3,43 @@ import type { WorkoutType } from '@/db/schema';
 /** Zona horaria fija del portal (Open Question §10: default sí). */
 export const TIME_ZONE = 'America/Monterrey';
 
-/**
- * Etiquetas por defecto de los tipos de entrenamiento del plan.
- * Son marcadores de posición editables desde Config: el PRD nombra los tipos
- * A-E pero no su contenido. Las reglas de secuencia (C↔D, A↔E) sí son fijas.
- */
+/** Etiquetas de los tipos de entrenamiento, tomadas del Plan Metabólico. */
 export const DEFAULT_WORKOUT_LABELS: Record<WorkoutType, string> = {
-  A: 'Circuito metabólico',
-  B: 'Fuerza tren superior',
-  C: 'Fuerza-resistencia',
-  D: 'Fuerza tren inferior',
-  E: 'Intervalos / HIIT',
+  A: 'Fuerza metabólica tren superior',
+  B: 'Zona 2 en caminadora',
+  C: 'Fuerza metabólica tren inferior + core',
+  D: 'Intervalos en caminadora',
+  E: 'Circuito full body «HYROX en casa»',
   OTHER: 'Otro',
 };
 
-/** Tipos donde el campo "rondas" es relevante (R1). */
+/** Etiqueta corta para donde no cabe el nombre completo (celda del calendario). */
+export const SHORT_WORKOUT_LABELS: Record<WorkoutType, string> = {
+  A: 'Superior',
+  B: 'Zona 2',
+  C: 'Inferior + core',
+  D: 'Intervalos',
+  E: 'Full body',
+  OTHER: 'Otro',
+};
+
+/** Día de descanso activo dentro de la plantilla semanal. */
+export const REST = 'REST' as const;
+export type PlannedDay = WorkoutType | typeof REST;
+
+/**
+ * Plantilla semanal por defecto (índice 0 = lunes), editable en Config.
+ * El plan sugiere la secuencia A → D → C → B → E con 2 días de descanso activo
+ * "donde acomode": los descansos van en miércoles y domingo porque es la única
+ * colocación que respeta las reglas duras — D→C consecutivos estarían prohibidos,
+ * y el descanso del domingo evita que E caiga junto a la A del lunes siguiente.
+ */
+export const DEFAULT_WEEKLY_TEMPLATE: PlannedDay[] = ['A', 'D', REST, 'C', 'B', 'E', REST];
+
+/**
+ * Tipos donde el campo "rondas" es relevante: A y C son circuitos de 4 rondas,
+ * y en E el plan pide registrar las rondas del AMRAP como métrica de progreso.
+ */
 export const ROUNDS_RELEVANT_TYPES: WorkoutType[] = ['A', 'C', 'E'];
 
 /**
@@ -29,15 +51,16 @@ export const SEQUENCE_RULES: Array<[WorkoutType, WorkoutType]> = [
   ['A', 'E'],
 ];
 
+/** Los 8 suplementos del plan, en su orden de impacto sobre el panel. */
 export const SUPPLEMENT_SEED: Array<{ name: string; timingLabel: string }> = [
-  { name: 'Inositol', timingLabel: 'Antes de comer' },
-  { name: 'Omega-3', timingLabel: 'Con comida grasa' },
-  { name: 'Creatina 5 g', timingLabel: 'Cualquier momento' },
-  { name: 'Magnesio', timingLabel: 'Antes de dormir' },
-  { name: 'D3 + K2', timingLabel: 'Con comida grasa' },
-  { name: 'HMB', timingLabel: 'Peri-entreno' },
-  { name: 'B12', timingLabel: 'Sublingual, en ayunas' },
-  { name: 'Proteína', timingLabel: 'Según objetivo del día' },
+  { name: 'Inositol (myo-D-chiro)', timingLabel: 'Pre-prandial, comida principal' },
+  { name: 'Omega-3 1,400 mg EPA+DHA', timingLabel: 'Diario, con comida grasa' },
+  { name: 'Creatina 5 g', timingLabel: 'Diaria, hora indistinta' },
+  { name: 'Magnesio bisglicinato', timingLabel: '30-60 min antes de dormir' },
+  { name: 'D3+K2', timingLabel: 'Con la comida más grasa' },
+  { name: 'HMB-Ca', timingLabel: 'Alrededor del entreno' },
+  { name: 'B12 metilcobalamina', timingLabel: 'Sublingual' },
+  { name: 'Proteína Birdman Falcon', timingLabel: 'Para llegar a 130-150 g' },
 ];
 
 /** Marcadores sugeridos para captura de laboratorio (R7). */
@@ -89,6 +112,7 @@ export const SETTINGS_DEFAULTS = {
   date_challenge_end: '2026-10-17',
   plan_start: '2026-08-10',
   workout_labels: JSON.stringify(DEFAULT_WORKOUT_LABELS),
+  weekly_template: JSON.stringify(DEFAULT_WEEKLY_TEMPLATE),
 } as const;
 
 export type SettingKey = keyof typeof SETTINGS_DEFAULTS;

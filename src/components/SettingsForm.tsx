@@ -1,14 +1,19 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { saveSettings } from '@/actions/settings';
 import { Field, FormError, SubmitButton, TextInput } from '@/components/form';
 import { WORKOUT_TYPES } from '@/db/schema';
+import { REST, type PlannedDay } from '@/lib/defaults';
 import type { AppSettings } from '@/lib/settings';
 import type { ActionState } from '@/lib/validation';
 
+const DAY_NAMES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const CHOICES: PlannedDay[] = ['A', 'B', 'C', 'D', 'E', REST];
+
 export function SettingsForm({ settings }: { settings: AppSettings }) {
   const [state, formAction] = useActionState<ActionState, FormData>(saveSettings, {});
+  const [template, setTemplate] = useState<PlannedDay[]>(settings.weeklyTemplate);
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
@@ -142,6 +147,39 @@ export function SettingsForm({ settings }: { settings: AppSettings }) {
             />
           </Field>
         </div>
+      </fieldset>
+
+      <fieldset className="flex flex-col gap-2">
+        <legend className="mb-1 font-semibold">Qué toca cada día</legend>
+        {template.map((planned, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <span className="w-24 shrink-0 text-[15px] text-ink-soft">{DAY_NAMES[index]}</span>
+            <input type="hidden" name={`template_${index}`} value={planned} />
+            <div className="flex flex-1 gap-1">
+              {CHOICES.map((choice) => (
+                <button
+                  key={choice}
+                  type="button"
+                  aria-label={`${DAY_NAMES[index]}: ${choice === REST ? 'descanso' : choice}`}
+                  aria-pressed={planned === choice}
+                  onClick={() =>
+                    setTemplate((current) =>
+                      current.map((value, i) => (i === index ? choice : value)),
+                    )
+                  }
+                  className={`tap flex-1 rounded-lg border py-2 text-[15px] font-bold ${
+                    planned === choice ? 'border-brand bg-brand-soft text-brand' : 'border-line'
+                  }`}
+                >
+                  {choice === REST ? '·' : choice}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+        <p className="text-[13px] text-ink-faint">
+          El punto es descanso activo. Reglas del plan: nunca C y D en días seguidos, nunca A y E.
+        </p>
       </fieldset>
 
       <fieldset className="flex flex-col gap-3">

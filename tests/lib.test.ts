@@ -11,7 +11,9 @@ import {
   todayISO,
   weekdayIndex,
 } from '../src/lib/date';
+import { DEFAULT_WEEKLY_TEMPLATE, REST } from '../src/lib/defaults';
 import { computeHomaIr, markerTrend, movementGlyph } from '../src/lib/labs';
+import { plannedFor } from '../src/lib/plan';
 import { findSequenceViolations } from '../src/lib/rules';
 import type { WorkoutType } from '../src/db/schema';
 
@@ -72,6 +74,33 @@ test('la tendencia de un marcador depende de su dirección deseable', () => {
   assert.equal(markerTrend('HDL', 41, undefined), 'none');
   assert.equal(movementGlyph(52, 41), '↑');
   assert.equal(movementGlyph(41, 52), '↓');
+});
+
+test('la plantilla semanal por defecto respeta las reglas duras del plan', () => {
+  const week = ['2026-08-10', '2026-08-11', '2026-08-12', '2026-08-13', '2026-08-14', '2026-08-15', '2026-08-16'];
+  const typesByDate = new Map<string, WorkoutType[]>();
+
+  // Dos semanas seguidas, para cazar también la violación que cruza el domingo.
+  for (const offset of [0, 7]) {
+    for (const date of week) {
+      const shifted = addDays(date, offset);
+      const planned = plannedFor(shifted, DEFAULT_WEEKLY_TEMPLATE);
+      if (planned !== REST) typesByDate.set(shifted, [planned]);
+    }
+  }
+
+  const dates = [...week.map((d) => addDays(d, 0)), ...week.map((d) => addDays(d, 7))];
+  assert.deepEqual(findSequenceViolations(typesByDate, dates), []);
+
+  // Y son 5 entrenos por semana, la meta del plan.
+  assert.equal(DEFAULT_WEEKLY_TEMPLATE.filter((day) => day !== REST).length, 5);
+});
+
+test('plannedFor mapea por día de la semana, no por posición', () => {
+  assert.equal(plannedFor('2026-08-10', DEFAULT_WEEKLY_TEMPLATE), 'A'); // lunes
+  assert.equal(plannedFor('2026-08-12', DEFAULT_WEEKLY_TEMPLATE), REST); // miércoles
+  assert.equal(plannedFor('2026-08-16', DEFAULT_WEEKLY_TEMPLATE), REST); // domingo
+  assert.equal(plannedFor('2026-08-17', DEFAULT_WEEKLY_TEMPLATE), 'A'); // lunes siguiente
 });
 
 test('reglas de secuencia: C↔D y A↔E consecutivos (R6)', () => {

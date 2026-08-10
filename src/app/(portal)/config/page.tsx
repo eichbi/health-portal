@@ -1,4 +1,5 @@
 import { asc } from 'drizzle-orm';
+import Link from 'next/link';
 import { db } from '@/db';
 import { supplementDefs } from '@/db/schema';
 import { SettingsForm } from '@/components/SettingsForm';
@@ -29,6 +30,18 @@ export default async function ConfigPage() {
 
       <Card title="Suplementos">
         <SupplementSettings supplements={supplements} />
+      </Card>
+
+      <Card title="Documentos">
+        <p className="mb-3 text-[15px] text-ink-soft">
+          El plan en PDF y cualquier archivo de respaldo que quieras tener a la mano.
+        </p>
+        <Link
+          href="/documentos"
+          className="tap block w-full rounded-xl border border-line bg-white py-3 text-center font-semibold text-brand"
+        >
+          Ir a Documentos
+        </Link>
       </Card>
 
       <Card title="Sesión">
