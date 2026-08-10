@@ -51,8 +51,8 @@ export function WorkoutForm({
                 type="button"
                 onClick={() => setType(option)}
                 aria-pressed={selected}
-                className={`tap rounded-xl border px-2 py-3 text-left ${
-                  selected ? 'border-brand bg-brand-soft' : 'border-line bg-white'
+                className={`tap rounded-md border px-2 py-3 text-left ${
+                  selected ? 'border-brand bg-brand-soft' : 'border-line bg-field'
                 }`}
               >
                 <span className="block text-lg font-bold leading-none">

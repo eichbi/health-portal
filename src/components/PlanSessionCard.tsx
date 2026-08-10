@@ -33,7 +33,7 @@ export function PlanSessionCard({
         <div className="border-t border-line p-4 pt-3">
           <p className="text-[15px] text-ink-soft">{session.benefit}</p>
 
-          <p className="mt-3 rounded-xl bg-idle-bg px-3 py-2 text-[14px]">{session.format}</p>
+          <p className="mt-3 rounded-md bg-idle-bg px-3 py-2 text-[14px]">{session.format}</p>
 
           {session.exercises && (
             <div className="-mx-4 mt-3 overflow-x-auto px-4">
@@ -65,7 +65,7 @@ export function PlanSessionCard({
           {session.blocks && (
             <ul className="mt-3 flex flex-col gap-2">
               {session.blocks.map((block) => (
-                <li key={block.label} className="rounded-xl border border-line px-3 py-2">
+                <li key={block.label} className="rounded-md border border-line px-3 py-2">
                   <p className="text-[13px] font-semibold text-ink-soft">{block.label}</p>
                   <p className="text-[15px]">{block.detail}</p>
                 </li>

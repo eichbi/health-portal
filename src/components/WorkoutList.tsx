@@ -31,7 +31,7 @@ export function WorkoutList({
         {workouts.map((workout) => (
           <li
             key={workout.id}
-            className="flex items-center gap-3 rounded-xl border border-line bg-white px-3 py-3"
+            className="flex items-center gap-3 rounded-md border border-line bg-field px-3 py-3"
           >
             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-soft text-lg font-bold text-brand">
               {workout.type === 'OTHER' ? '·' : workout.type}

@@ -38,7 +38,7 @@ export function DocumentsManager({
           {documents.map((document) => (
             <li
               key={document.id}
-              className="flex items-center gap-3 rounded-xl border border-line bg-white px-3 py-3"
+              className="flex items-center gap-3 rounded-md border border-line bg-field px-3 py-3"
             >
               <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-idle-bg text-[11px] font-bold text-ink-soft">
                 {document.contentType.includes('pdf')
@@ -78,12 +78,12 @@ export function DocumentsManager({
         <button
           type="button"
           onClick={() => setUploading(true)}
-          className="tap w-full rounded-xl border border-dashed border-line bg-white py-3 font-semibold text-brand"
+          className="tap w-full rounded-md border border-dashed border-line bg-field py-3 font-semibold text-brand"
         >
           + Subir documento
         </button>
       ) : (
-        <div className="rounded-xl bg-warn-bg p-3 text-[14px] text-warn">
+        <div className="rounded-md bg-warn-bg p-3 text-[14px] text-warn">
           <p className="font-semibold">Falta conectar el almacenamiento</p>
           <p className="mt-1">
             En Vercel → Storage → Create Blob, conéctalo a este proyecto y vuelve a desplegar. Sin

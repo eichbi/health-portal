@@ -4,7 +4,7 @@ import { PlannedToday } from '@/components/PlannedToday';
 import { QuickAdd } from '@/components/QuickAdd';
 import { SupplementChecklist } from '@/components/SupplementChecklist';
 import { WorkoutList } from '@/components/WorkoutList';
-import { Card } from '@/components/ui';
+import { BlockMeter, Card, ScreenHeader } from '@/components/ui';
 import { endOfWeek, formatFull, startOfWeek, todayISO } from '@/lib/date';
 import { countWorkoutDays, getDay } from '@/lib/queries/day';
 import { plannedFor } from '@/lib/plan';
@@ -27,13 +27,11 @@ export default async function TodayPage() {
 
   return (
     <main className="flex flex-col gap-4">
-      <header className="flex items-baseline justify-between">
-        <div>
-          <h1 className="text-xl font-bold leading-tight">Hoy</h1>
-          <p className="text-[15px] text-ink-soft">{formatFull(today)}</p>
-        </div>
-        <span className="text-[13px] font-semibold text-ink-faint">FitTrack</span>
-      </header>
+      <ScreenHeader
+        path="hoy"
+        meta={formatFull(today)}
+        right={<span className="shrink-0 text-[12px] text-ink-faint">fittrack</span>}
+      />
 
       <PlannedToday
         date={today}
@@ -44,26 +42,20 @@ export default async function TodayPage() {
 
       <DayTiles tiles={tiles} />
 
-      <div>
+      <div className="card px-4 py-3">
         <div className="mb-1 flex items-baseline justify-between">
-          <span className="text-[15px] font-medium text-ink-soft">Entrenos de la semana</span>
+          <span className="text-[13px] lowercase text-ink-soft">entrenos de la semana</span>
           <span className="font-bold tabular-nums">
-            {trainedThisWeek}/{goal}
+            {trainedThisWeek}/{goal}{' '}
+            <span className="text-[12px] font-normal text-ink-faint">({pct}%)</span>
           </span>
         </div>
-        <div
-          className="h-2.5 w-full overflow-hidden rounded-full bg-idle-bg"
-          role="progressbar"
-          aria-valuenow={trainedThisWeek}
-          aria-valuemin={0}
-          aria-valuemax={goal}
-          aria-label="Entrenos completados esta semana"
-        >
-          <div
-            className={`h-full rounded-full ${trainedThisWeek >= goal ? 'bg-ok' : 'bg-brand'}`}
-            style={{ width: `${pct}%` }}
-          />
-        </div>
+        <BlockMeter
+          value={trainedThisWeek}
+          max={goal}
+          slots={16}
+          tone={trainedThisWeek >= goal ? 'ok' : 'brand'}
+        />
       </div>
 
       <Countdowns

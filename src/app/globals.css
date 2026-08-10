@@ -1,28 +1,39 @@
 @import 'tailwindcss';
 
+/*
+ * Tema consola: fondo oscuro, monoespaciada y los colores ANSI de siempre.
+ * Los semáforos caen solos en verde/ámbar/rojo, y el cyan queda para lo
+ * interactivo — igual que en una terminal, donde el cyan son las rutas.
+ */
 @theme {
-  --color-ink: #0b1220;
-  --color-ink-soft: #475569;
-  --color-ink-faint: #7c8899;
-  --color-surface: #ffffff;
-  --color-canvas: #f2f4f7;
-  --color-line: #dfe3ea;
+  --color-canvas: #0a0e14;
+  --color-surface: #10161f;
+  --color-field: #0c1219;
+  --color-line: #1e2936;
+  --color-line-soft: #16202b;
 
-  --color-ok: #15803d;
-  --color-ok-bg: #dcfce7;
-  --color-warn: #b45309;
-  --color-warn-bg: #fef3c7;
-  --color-bad: #b91c1c;
-  --color-bad-bg: #fee2e2;
-  --color-idle: #64748b;
-  --color-idle-bg: #eef1f5;
+  --color-ink: #d5e0ec;
+  --color-ink-soft: #8fa3b8;
+  --color-ink-faint: #5f7185;
 
-  --color-brand: #0f766e;
-  --color-brand-soft: #ccfbf1;
+  --color-ok: #3ddc84;
+  --color-ok-bg: #0f2a1d;
+  --color-warn: #f0b429;
+  --color-warn-bg: #2b2110;
+  --color-bad: #ff5f56;
+  --color-bad-bg: #2d1414;
+  --color-idle: #6b7f94;
+  --color-idle-bg: #141c26;
+
+  --color-brand: #4fc3f7;
+  --color-brand-soft: #0e2733;
+
+  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html {
@@ -32,12 +43,32 @@ html {
 body {
   background: var(--color-canvas);
   color: var(--color-ink);
-  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-mono);
   /* Se usa post-entreno: nada de tipografía pequeña. */
-  font-size: 17px;
-  line-height: 1.45;
+  font-size: 16px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
+}
+
+/* Rejilla tenue de fondo, como el fósforo de una pantalla vieja. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(var(--color-line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line-soft) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.35;
+  mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 75%);
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* Los inputs bajo 16px hacen que iOS haga zoom al enfocar. */
@@ -46,10 +77,9 @@ select,
 textarea,
 button {
   font-family: inherit;
-  font-size: 17px;
+  font-size: 16px;
 }
 
-/* Quita las flechas de los number inputs: se captura con teclado numérico. */
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -59,15 +89,55 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+input[type='date'],
+input[type='time'] {
+  color-scheme: dark;
+}
+
 @utility card {
   background: var(--color-surface);
   border: 1px solid var(--color-line);
-  border-radius: 1rem;
+  border-radius: 0.5rem;
 }
 
 @utility tap {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+}
+
+/* Etiqueta de sección con el aire de un comentario de código. */
+@utility term-label {
+  color: var(--color-ink-faint);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Cursor parpadeante para el encabezado de la pantalla activa. */
+@utility caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  vertical-align: -0.15em;
+  background: var(--color-brand);
+  animation: blink 1.1s step-end infinite;
+}
+
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret {
+    animation: none;
+  }
 }
 
 @media print {
@@ -76,6 +146,10 @@ input[type='number'] {
   }
   body {
     background: #fff;
+    color: #000;
     font-size: 12px;
+  }
+  body::before {
+    display: none;
   }
 }

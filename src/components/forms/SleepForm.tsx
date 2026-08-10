@@ -35,6 +35,9 @@ export function SleepForm({
       <Field label="Fecha">
         <TextInput type="date" name="date" defaultValue={sleep?.date ?? date} required />
       </Field>
+      <p className="-mt-2 text-[13px] text-ink-faint">
+        Es el sueño de anoche: la fecha es el día en que despertaste.
+      </p>
 
       <div className="grid grid-cols-2 gap-2">
         {(
@@ -48,8 +51,8 @@ export function SleepForm({
             type="button"
             onClick={() => setMode(value)}
             aria-pressed={mode === value}
-            className={`tap rounded-xl border px-3 py-2 text-[15px] font-medium ${
-              mode === value ? 'border-brand bg-brand-soft' : 'border-line bg-white'
+            className={`tap rounded-md border px-3 py-2 text-[15px] font-medium ${
+              mode === value ? 'border-brand bg-brand-soft' : 'border-line bg-field'
             }`}
           >
             {label}
@@ -121,8 +124,8 @@ export function SleepForm({
               type="button"
               onClick={() => setQuality(quality === value ? 0 : value)}
               aria-pressed={quality === value}
-              className={`tap rounded-xl border py-3 text-lg font-bold ${
-                quality === value ? 'border-brand bg-brand-soft' : 'border-line bg-white'
+              className={`tap rounded-md border py-3 text-lg font-bold ${
+                quality === value ? 'border-brand bg-brand-soft' : 'border-line bg-field'
               }`}
             >
               {value}

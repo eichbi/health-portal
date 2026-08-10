@@ -197,7 +197,7 @@ export function SettingsForm({ settings }: { settings: AppSettings }) {
 
       <FormError message={state.error} />
       {state.ok && (
-        <p className="rounded-xl bg-ok-bg px-3 py-2 text-[15px] font-medium text-ok">
+        <p className="rounded-md bg-ok-bg px-3 py-2 text-[15px] font-medium text-ok">
           Configuración guardada.
         </p>
       )}

@@ -1,9 +1,24 @@
 import { STATUS_STYLES, type Status } from './ui';
 import type { Tile } from '@/lib/status';
 
+/** Glifo de estado, al estilo de la salida de un test runner. */
+const STATUS_GLYPH: Record<Status, string> = {
+  ok: '✓',
+  warn: '!',
+  bad: '✗',
+  idle: '·',
+};
+
+const STATUS_TEXT: Record<Status, string> = {
+  ok: 'En meta',
+  warn: 'Cerca de la meta',
+  bad: 'Fuera de meta',
+  idle: 'Sin dato',
+};
+
 export function DayTiles({ tiles }: { tiles: Tile[] }) {
   return (
-    <ul className="grid grid-cols-3 gap-2">
+    <ul className="grid grid-cols-3 gap-1.5">
       {tiles.map((tile) => (
         <li key={tile.key}>
           <TileCard tile={tile} />
@@ -16,27 +31,18 @@ export function DayTiles({ tiles }: { tiles: Tile[] }) {
 function TileCard({ tile }: { tile: Tile }) {
   const styles = STATUS_STYLES[tile.status];
   return (
-    <div className={`h-full rounded-xl border border-line p-2.5 ${styles.bg}`}>
-      <div className="flex items-center gap-1.5">
-        <span aria-hidden className={`size-2 shrink-0 rounded-full ${styles.dot}`} />
-        <span className="truncate text-[13px] font-medium text-ink-soft">{tile.label}</span>
+    <div className={`h-full rounded-md border border-line p-2.5 ${styles.bg}`}>
+      <div className="flex items-baseline gap-1.5">
+        <span aria-hidden className={`text-[13px] font-bold ${styles.text}`}>
+          {STATUS_GLYPH[tile.status]}
+        </span>
+        <span className="truncate text-[12px] lowercase text-ink-soft">{tile.label}</span>
       </div>
-      <p className={`mt-1 truncate text-[17px] font-bold leading-tight ${styles.text}`}>
+      <p className={`mt-1 truncate text-[17px] font-bold leading-tight tabular-nums ${styles.text}`}>
         {tile.value}
       </p>
-      {/* La meta puede envolver: en 3 columnas de 390 px un rango de kcal no
-          cabe en una línea y truncarlo la vuelve inútil. */}
-      <p className="text-[12px] leading-tight text-ink-faint">meta {tile.target}</p>
-      <span className="sr-only">{statusText(tile.status)}</span>
+      <p className="text-[11px] leading-tight text-ink-faint">→ {tile.target}</p>
+      <span className="sr-only">{STATUS_TEXT[tile.status]}</span>
     </div>
   );
-}
-
-function statusText(status: Status): string {
-  return {
-    ok: 'En meta',
-    warn: 'Cerca de la meta',
-    bad: 'Fuera de meta',
-    idle: 'Sin dato',
-  }[status];
 }

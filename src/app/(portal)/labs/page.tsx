@@ -1,7 +1,7 @@
 import { LabPanelsManager, SecaManager } from '@/components/labs/LabsManager';
 import { MarkerTable } from '@/components/labs/MarkerTable';
 import { SecaTable } from '@/components/labs/SecaTable';
-import { Card } from '@/components/ui';
+import { Card, ScreenHeader } from '@/components/ui';
 import { todayISO } from '@/lib/date';
 import { buildMarkerMatrix, getLabPanels, getSecaMeasurements } from '@/lib/queries/labs';
 
@@ -14,10 +14,7 @@ export default async function LabsPage() {
 
   return (
     <main className="flex flex-col gap-4">
-      <header>
-        <h1 className="text-xl font-bold leading-tight">Laboratorio y SECA</h1>
-        <p className="text-[15px] text-ink-soft">Panel contra panel, medición contra medición.</p>
-      </header>
+      <ScreenHeader path="labs" meta="panel contra panel, medición contra medición" />
 
       <Card title="Laboratorio · comparativa">
         <MarkerTable matrix={matrix} />

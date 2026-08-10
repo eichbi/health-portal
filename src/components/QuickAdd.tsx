@@ -11,7 +11,7 @@ type Action = 'workout' | 'sleep' | 'metrics';
 
 const TITLES: Record<Action, string> = {
   workout: 'Registrar entreno',
-  sleep: 'Registrar sueño',
+  sleep: 'Registrar sueño de anoche',
   metrics: 'Peso y métricas',
 };
 
@@ -44,7 +44,7 @@ export function QuickAdd({
               type="button"
               aria-label="Cerrar acciones rápidas"
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 -z-10 bg-ink/20"
+              className="fixed inset-0 -z-10 bg-black/50"
             />
             <div role="menu" aria-label="Registro rápido" className="flex flex-col items-end gap-2">
               {(
@@ -73,7 +73,7 @@ export function QuickAdd({
           onClick={() => setMenuOpen((value) => !value)}
           aria-expanded={menuOpen}
           aria-label="Acciones rápidas"
-          className="tap grid size-14 place-items-center rounded-full bg-brand text-3xl leading-none text-white shadow-lg"
+          className="tap grid size-14 place-items-center rounded-full bg-brand text-3xl leading-none text-canvas shadow-lg"
         >
           <span className={menuOpen ? 'rotate-45 transition-transform' : 'transition-transform'}>
             +

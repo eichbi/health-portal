@@ -65,7 +65,7 @@ export default async function WeekPage({
               <li key={day.date} className="text-center">
                 <p className="text-[12px] font-medium text-ink-faint">{WEEKDAY_LABELS[index]}</p>
                 <div
-                  className={`mt-1 rounded-xl border p-1 ${
+                  className={`mt-1 rounded-md border p-1 ${
                     isToday ? 'border-brand' : 'border-transparent'
                   }`}
                 >
@@ -105,7 +105,7 @@ export default async function WeekPage({
         </ul>
 
         {violations.length > 0 && (
-          <div className="mt-3 rounded-xl bg-warn-bg p-3 text-[14px] text-warn">
+          <div className="mt-3 rounded-md bg-warn-bg p-3 text-[14px] text-warn">
             <p className="font-semibold">Regla de secuencia rota</p>
             <ul className="mt-1 list-disc pl-4">
               {violations.map((day) => (
@@ -152,7 +152,7 @@ function NavLink({ href, label, title }: { href: string; label: string; title: s
       href={href}
       title={title}
       aria-label={title}
-      className="tap grid size-11 shrink-0 place-items-center rounded-full border border-line bg-white text-xl font-bold text-ink-soft"
+      className="tap grid size-11 shrink-0 place-items-center rounded-full border border-line bg-field text-xl font-bold text-ink-soft"
     >
       {label}
     </Link>

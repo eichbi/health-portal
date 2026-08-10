@@ -13,11 +13,13 @@ import {
 
 export type TrendPoint = { label: string; value: number | null };
 
-const AXIS = { fontSize: 12, fill: '#7c8899' };
+const AXIS = { fontSize: 11, fill: '#5f7185', fontFamily: 'ui-monospace, monospace' };
+const GRID = '#1e2936';
+const GOAL = '#f0b429';
 
 export function TrendChart({
   data,
-  color = '#0f766e',
+  color = '#4fc3f7',
   unit = '',
   goal,
   decimals = 0,
@@ -58,7 +60,7 @@ export function TrendChart({
     <div className="h-40 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-          <CartesianGrid stroke="#eef1f5" vertical={false} />
+          <CartesianGrid stroke={GRID} vertical={false} />
           <XAxis dataKey="label" tick={AXIS} tickLine={false} axisLine={false} minTickGap={24} />
           <YAxis
             tick={AXIS}
@@ -70,12 +72,18 @@ export function TrendChart({
             tickFormatter={tickLabel}
           />
           {goal !== undefined && (
-            <ReferenceLine y={goal} stroke="#b45309" strokeDasharray="4 4" />
+            <ReferenceLine y={goal} stroke={GOAL} strokeDasharray="3 3" />
           )}
           <Tooltip
             formatter={(value) => [format(Number(value)), '']}
-            labelStyle={{ color: '#475569', fontSize: 12 }}
-            contentStyle={{ borderRadius: 12, border: '1px solid #dfe3ea', fontSize: 14 }}
+            labelStyle={{ color: '#8fa3b8', fontSize: 12 }}
+            contentStyle={{
+              borderRadius: 6,
+              border: '1px solid #1e2936',
+              background: '#10161f',
+              color: '#d5e0ec',
+              fontSize: 13,
+            }}
             separator=""
           />
           <Line

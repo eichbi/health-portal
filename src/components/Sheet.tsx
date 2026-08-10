@@ -36,13 +36,13 @@ export function Sheet({
         type="button"
         aria-label="Cerrar"
         onClick={onClose}
-        className="absolute inset-0 bg-ink/40"
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="relative max-h-[92vh] w-full overflow-y-auto rounded-t-2xl bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl sm:max-w-md sm:rounded-2xl"
+        className="relative max-h-[92vh] w-full overflow-y-auto rounded-t-2xl bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-xl sm:max-w-md sm:rounded-lg"
       >
         <header className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-bold">{title}</h2>
