@@ -28,8 +28,9 @@ export default async function DocumentsPage() {
       </Card>
 
       <p className="px-1 text-[13px] text-ink-faint">
-        Los archivos se guardan en almacenamiento privado y se sirven a través del portal, así que
-        quedan detrás de tu contraseña igual que el resto de tus datos.
+        Los archivos se guardan con acceso privado y se sirven a través del portal: su URL de
+        almacenamiento no abre sin credenciales del servidor, así que quedan detrás de tu
+        contraseña igual que el resto de tus datos.
       </p>
     </main>
   );
