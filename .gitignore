@@ -119,3 +119,8 @@ out
 dist
 dist-ssr
 *.local
+
+# Next.js / Vercel
+.env*.local
+.vercel
+next-env.d.ts
