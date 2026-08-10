@@ -111,6 +111,10 @@ actions que revalidan el layout. No hay API REST intermedia.
 - **El peso de la vista Tendencias es media móvil de 7 días** para separar ruido de
   tendencia real.
 
+- **La estética es de consola:** fondo oscuro, monoespaciada y los colores ANSI de toda la
+  vida. Los semáforos caen solos en verde/ámbar/rojo y el cyan queda para lo interactivo.
+  El tamaño de tipografía y de área táctil no se tocó — el portal se sigue usando
+  post-entreno, así que la legibilidad manda sobre el estilo.
 - **Los documentos son privados por dos vías.** Se suben a Vercel Blob con
   `access: 'private'`, así que su URL de almacenamiento no responde sin el token del store;
   y el navegador ni siquiera la ve, porque sólo recibe `/api/documentos/<id>`, una ruta que

@@ -77,14 +77,14 @@ export function SupplementChecklist({
               type="button"
               onClick={() => toggle(item)}
               aria-pressed={item.taken}
-              className={`tap flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left ${
-                item.taken ? 'border-ok/40 bg-ok-bg' : 'border-line bg-white'
+              className={`tap flex w-full items-center gap-3 rounded-md border px-3 py-3 text-left ${
+                item.taken ? 'border-ok/40 bg-ok-bg' : 'border-line bg-field'
               }`}
             >
               <span
                 aria-hidden
                 className={`grid size-7 shrink-0 place-items-center rounded-full border-2 text-sm font-bold ${
-                  item.taken ? 'border-ok bg-ok text-white' : 'border-line text-transparent'
+                  item.taken ? 'border-ok bg-ok text-canvas' : 'border-line text-transparent'
                 }`}
               >
                 ✓

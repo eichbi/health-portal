@@ -83,7 +83,7 @@ export function MetricsForm({
       <FormError message={state.error} />
 
       {needsConfirm && (
-        <label className="flex items-start gap-3 rounded-xl border border-warn/40 bg-warn-bg p-3 text-[15px]">
+        <label className="flex items-start gap-3 rounded-md border border-warn/40 bg-warn-bg p-3 text-[15px]">
           <input
             type="checkbox"
             name="confirmOverwrite"

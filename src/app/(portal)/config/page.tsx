@@ -4,7 +4,7 @@ import { db } from '@/db';
 import { supplementDefs } from '@/db/schema';
 import { SettingsForm } from '@/components/SettingsForm';
 import { SupplementSettings } from '@/components/SupplementSettings';
-import { Card } from '@/components/ui';
+import { Card, ScreenHeader } from '@/components/ui';
 import { TIME_ZONE } from '@/lib/defaults';
 import { getSettings } from '@/lib/settings';
 import { logout } from '@/app/login/actions';
@@ -19,10 +19,7 @@ export default async function ConfigPage() {
 
   return (
     <main className="flex flex-col gap-4">
-      <header>
-        <h1 className="text-xl font-bold leading-tight">Configuración</h1>
-        <p className="text-[15px] text-ink-soft">Metas, fechas y suplementos.</p>
-      </header>
+      <ScreenHeader path="config" meta="metas, fechas y suplementos" />
 
       <Card title="Metas y fechas">
         <SettingsForm settings={settings} />
@@ -38,7 +35,7 @@ export default async function ConfigPage() {
         </p>
         <Link
           href="/documentos"
-          className="tap block w-full rounded-xl border border-line bg-white py-3 text-center font-semibold text-brand"
+          className="tap block w-full rounded-md border border-line bg-field py-3 text-center font-semibold text-brand"
         >
           Ir a Documentos
         </Link>
@@ -51,7 +48,7 @@ export default async function ConfigPage() {
         <form action={logout}>
           <button
             type="submit"
-            className="tap w-full rounded-xl border border-line bg-white py-3 font-semibold text-ink"
+            className="tap w-full rounded-md border border-line bg-field py-3 font-semibold text-ink"
           >
             Cerrar sesión
           </button>

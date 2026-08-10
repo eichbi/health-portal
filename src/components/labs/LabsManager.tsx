@@ -29,7 +29,7 @@ export function LabPanelsManager({
       <button
         type="button"
         onClick={() => setCreating(true)}
-        className="tap w-full rounded-xl border border-dashed border-line bg-white py-3 font-semibold text-brand"
+        className="tap w-full rounded-md border border-dashed border-line bg-field py-3 font-semibold text-brand"
       >
         + Capturar panel de laboratorio
       </button>
@@ -39,7 +39,7 @@ export function LabPanelsManager({
           {panels.map((panel) => (
             <li
               key={panel.id}
-              className="flex items-center gap-3 rounded-xl border border-line bg-white px-3 py-3"
+              className="flex items-center gap-3 rounded-md border border-line bg-field px-3 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="font-semibold leading-tight">{formatLong(panel.date)}</p>
@@ -107,7 +107,7 @@ export function SecaManager({
       <button
         type="button"
         onClick={() => setCreating(true)}
-        className="tap w-full rounded-xl border border-dashed border-line bg-white py-3 font-semibold text-brand"
+        className="tap w-full rounded-md border border-dashed border-line bg-field py-3 font-semibold text-brand"
       >
         + Capturar medición SECA
       </button>
@@ -117,7 +117,7 @@ export function SecaManager({
           {measurements.map((measurement) => (
             <li
               key={measurement.id}
-              className="flex items-center gap-3 rounded-xl border border-line bg-white px-3 py-3"
+              className="flex items-center gap-3 rounded-md border border-line bg-field px-3 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="font-semibold leading-tight">{formatLong(measurement.date)}</p>

@@ -17,7 +17,7 @@ export function SupplementSettings({ supplements }: { supplements: SupplementDef
         {supplements.map((supplement) => (
           <li
             key={supplement.id}
-            className="flex items-center gap-3 rounded-xl border border-line bg-white px-3 py-2.5"
+            className="flex items-center gap-3 rounded-md border border-line bg-field px-3 py-2.5"
           >
             <div className="min-w-0 flex-1">
               <p className="truncate font-semibold leading-tight">
@@ -44,7 +44,7 @@ export function SupplementSettings({ supplements }: { supplements: SupplementDef
       <button
         type="button"
         onClick={() => setCreating(true)}
-        className="tap w-full rounded-xl border border-dashed border-line bg-white py-3 font-semibold text-brand"
+        className="tap w-full rounded-md border border-dashed border-line bg-field py-3 font-semibold text-brand"
       >
         + Agregar suplemento
       </button>

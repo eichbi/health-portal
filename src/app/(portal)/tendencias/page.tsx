@@ -1,5 +1,5 @@
 import { TrendChart } from '@/components/charts/TrendChart';
-import { Card } from '@/components/ui';
+import { Card, ScreenHeader } from '@/components/ui';
 import { formatShort, minutesToHours, todayISO } from '@/lib/date';
 import { getTrends } from '@/lib/queries/trends';
 import { getSettings } from '@/lib/settings';
@@ -31,15 +31,13 @@ export default async function TrendsPage() {
 
   return (
     <main className="flex flex-col gap-4">
-      <header>
-        <h1 className="text-xl font-bold leading-tight">Tendencias</h1>
-        <p className="text-[15px] text-ink-soft">
-          Últimas {WEEKS} semanas · {formatShort(trends.from)} a {formatShort(trends.to)}
-        </p>
-      </header>
+      <ScreenHeader
+        path="tendencias"
+        meta={`últimas ${WEEKS} semanas · ${formatShort(trends.from)} → ${formatShort(trends.to)}`}
+      />
 
       <Card title="Peso (media 7 días)">
-        <TrendChart data={weight} unit="kg" decimals={1} color="#0f766e" />
+        <TrendChart data={weight} unit="kg" decimals={1} color="#4fc3f7" />
       </Card>
 
       <Card title="Sueño promedio entre semana (L-V)">
@@ -47,17 +45,17 @@ export default async function TrendsPage() {
           data={sleep}
           unit="h"
           decimals={1}
-          color="#4f46e5"
+          color="#a78bfa"
           goal={minutesToHours(settings.goalSleepMin)}
         />
       </Card>
 
       <Card title="Pasos promedio por semana">
-        <TrendChart data={steps} color="#b45309" goal={settings.goalSteps} />
+        <TrendChart data={steps} color="#f0b429" goal={settings.goalSteps} />
       </Card>
 
       <Card title="Entrenos por semana">
-        <TrendChart data={workouts} color="#15803d" goal={settings.goalWorkoutsPerWeek} />
+        <TrendChart data={workouts} color="#3ddc84" goal={settings.goalWorkoutsPerWeek} />
       </Card>
 
       <p className="px-1 text-[13px] text-ink-faint">

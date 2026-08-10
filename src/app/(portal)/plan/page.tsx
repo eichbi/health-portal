@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { PlanSessionCard } from '@/components/PlanSessionCard';
-import { Card, Row } from '@/components/ui';
+import { Card, Row, ScreenHeader } from '@/components/ui';
 import { WEEKDAY_LABELS, daysBetween, formatShort, todayISO, weekdayIndex } from '@/lib/date';
 import { REST } from '@/lib/defaults';
 import {
@@ -28,13 +28,15 @@ export default async function PlanPage() {
 
   return (
     <main className="flex flex-col gap-4">
-      <header>
-        <h1 className="text-xl font-bold leading-tight">{PLAN_META.title}</h1>
-        <p className="text-[15px] text-ink-soft">
-          {dayNumber >= 1 ? `Día ${dayNumber}` : `Arranca el ${formatShort(settings.planStart)}`}
-          {phase && ` · ${phase.name}`}
-        </p>
-      </header>
+      <ScreenHeader
+        path="plan"
+        meta={
+          <>
+            {dayNumber >= 1 ? `día ${dayNumber}/38` : `arranca el ${formatShort(settings.planStart)}`}
+            {phase && ` · ${phase.name}`}
+          </>
+        }
+      />
 
       <Card title="Semana tipo">
         <ul className="grid grid-cols-7 gap-1">
@@ -85,7 +87,7 @@ export default async function PlanPage() {
 
       <Card title="Cómo se progresa">
         <p className="text-[15px] text-ink-soft">{PLAN_META.progression}</p>
-        <p className="mt-3 rounded-xl bg-warn-bg px-3 py-2 text-[14px] text-warn">
+        <p className="mt-3 rounded-md bg-warn-bg px-3 py-2 text-[14px] text-warn">
           <strong className="font-semibold">Límite de carga:</strong> {PLAN_META.loadLimit}
         </p>
       </Card>
@@ -109,7 +111,7 @@ export default async function PlanPage() {
             return (
               <li
                 key={item.name}
-                className={`rounded-xl border px-3 py-2 ${
+                className={`rounded-md border px-3 py-2 ${
                   active ? 'border-brand bg-brand-soft' : 'border-line'
                 }`}
               >
@@ -142,7 +144,7 @@ export default async function PlanPage() {
             <Row key={row.concept} label={row.concept} value={row.value} />
           ))}
         </div>
-        <p className="mt-3 rounded-xl bg-warn-bg px-3 py-2 text-[14px] text-warn">
+        <p className="mt-3 rounded-md bg-warn-bg px-3 py-2 text-[14px] text-warn">
           {NUTRITION.caveat}
         </p>
       </Card>

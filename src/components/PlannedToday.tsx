@@ -50,7 +50,7 @@ export function PlannedToday({
         <div className="flex items-center gap-3">
           <span
             className={`grid size-11 shrink-0 place-items-center rounded-full text-xl font-bold ${
-              done ? 'bg-ok text-white' : 'bg-brand-soft text-brand'
+              done ? 'bg-ok text-canvas' : 'bg-brand-soft text-brand'
             }`}
           >
             {done ? '✓' : planned}
@@ -73,14 +73,14 @@ export function PlannedToday({
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="tap flex-1 rounded-xl bg-brand px-4 py-2.5 text-center font-semibold text-white"
+              className="tap flex-1 rounded-md bg-brand px-4 py-2.5 text-center font-bold text-canvas"
             >
               Registrar {planned}
             </button>
           )}
           <Link
             href={`/plan#tipo-${planned}`}
-            className="tap flex-1 rounded-xl border border-line bg-white px-4 py-2.5 text-center font-semibold text-ink"
+            className="tap flex-1 rounded-md border border-line bg-field px-4 py-2.5 text-center font-semibold text-ink"
           >
             Ver la rutina
           </Link>
