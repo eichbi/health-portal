@@ -3,18 +3,20 @@
 import { useCallback, useState } from 'react';
 import { Sheet } from './Sheet';
 import { MetricsForm } from './forms/MetricsForm';
+import { NoteForm } from './forms/NoteForm';
 import { SleepForm } from './forms/SleepForm';
 import { VitalsForm } from './forms/VitalsForm';
 import { WorkoutForm } from './forms/WorkoutForm';
 import type { DailyMetric, SleepLog, Vitals, WorkoutType } from '@/db/schema';
 
-type Action = 'workout' | 'sleep' | 'metrics' | 'vitals';
+type Action = 'workout' | 'sleep' | 'metrics' | 'vitals' | 'note';
 
 const TITLES: Record<Action, string> = {
   workout: 'Registrar entreno',
   sleep: 'Registrar sueño de anoche',
   metrics: 'Peso y métricas',
   vitals: 'Toma de Omron',
+  note: 'Nueva nota',
 };
 
 export function QuickAdd({
@@ -59,6 +61,7 @@ export function QuickAdd({
                   ['sleep', 'Sueño'],
                   ['metrics', 'Peso'],
                   ['vitals', 'Omron'],
+                  ['note', 'Nota'],
                 ] as const
               ).map(([value, label]) => (
                 <button
@@ -100,6 +103,7 @@ export function QuickAdd({
         {action === 'sleep' && <SleepForm date={date} sleep={sleep} onDone={close} />}
         {action === 'metrics' && <MetricsForm date={date} metrics={metrics} onDone={close} />}
         {action === 'vitals' && <VitalsForm date={date} vitals={vitals} onDone={close} />}
+        {action === 'note' && <NoteForm onDone={close} />}
       </Sheet>
     </>
   );

@@ -103,6 +103,20 @@ export function formatFull(iso: ISODate): string {
   return `${DAY_NAMES[weekdayIndex(iso)]} ${dt.getUTCDate()} de ${month}`;
 }
 
+const dateTimeFormatter = new Intl.DateTimeFormat('es-MX', {
+  timeZone: TIME_ZONE,
+  day: 'numeric',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+});
+
+/** "10 ago, 22:47" en la zona del portal, para timestamps como el de una nota. */
+export function formatDateTime(date: Date): string {
+  return dateTimeFormatter.format(date).replace(/\./g, '');
+}
+
 /** Minutos desde medianoche para "HH:MM". `null` si no parsea. */
 export function parseHHMM(value: string | null | undefined): number | null {
   if (!value) return null;

@@ -36,6 +36,13 @@
       "when": 1786415411802,
       "tag": "0004_workout_photos",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786430363562,
+      "tag": "0005_slimy_imperial_guard",
+      "breakpoints": true
     }
   ]
 }

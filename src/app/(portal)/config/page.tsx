@@ -41,6 +41,18 @@ export default async function ConfigPage() {
         </Link>
       </Card>
 
+      <Card title="Notas">
+        <p className="mb-3 text-[15px] text-ink-soft">
+          Ideas sueltas que capturaste desde el botón + en Hoy, con su fecha y hora.
+        </p>
+        <Link
+          href="/notas"
+          className="tap block w-full rounded-md border border-line bg-field py-3 text-center font-semibold text-brand"
+        >
+          Ir a Notas
+        </Link>
+      </Card>
+
       <Card title="Sesión">
         <p className="mb-3 text-[15px] text-ink-soft">
           Zona horaria del portal: <strong>{TIME_ZONE}</strong>.
