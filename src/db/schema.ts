@@ -138,6 +138,13 @@ export const secaMeasurements = pgTable(
   (t) => [uniqueIndex('seca_measurements_date_key').on(t.date)],
 );
 
+/** Ideas sueltas capturadas al vuelo: sólo texto y el momento exacto en que se guardaron. */
+export const notes = pgTable('notes', {
+  id: serial('id').primaryKey(),
+  body: text('body').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const settings = pgTable('settings', {
   key: text('key').primaryKey(),
   value: text('value').notNull(),
@@ -180,3 +187,4 @@ export type LabResult = typeof labResults.$inferSelect;
 export type SecaMeasurement = typeof secaMeasurements.$inferSelect;
 export type StoredDocument = typeof documents.$inferSelect;
 export type Vitals = typeof vitals.$inferSelect;
+export type Note = typeof notes.$inferSelect;

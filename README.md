@@ -65,7 +65,7 @@ cerrado y `/login` lo explica: falla cerrado, no abierto.
 ```
 src/
   app/
-    (portal)/            Hoy · Plan · Semana · Tendencias · Labs · Config
+    (portal)/            Hoy · Plan · Semana · Tendencias · Labs · Config · Documentos · Notas
     api/documentos/      Sirve los archivos de Blob detrás de la sesión
     login/               Pantalla de acceso y server actions de sesión
     manifest.ts          Manifest de la PWA
@@ -143,6 +143,11 @@ actions que revalidan el layout. No hay API REST intermedia.
   Omron" siguen mirando el día real. El cronómetro en vivo no se ofrece fuera de hoy — no
   tiene sentido cronometrar un día que ya pasó — pero "Registrar directo" sigue disponible
   para capturar en retraso.
+- **Notas es sólo texto y su timestamp**, sin fecha editable ni categoría: se captura desde el
+  botón + en Hoy (disponible sin importar qué día estés viendo) y el momento exacto de guardado
+  no se puede tocar después — es justo el dato que le da valor a una idea suelta. Se consulta
+  en `/notas`, enlazada desde Config igual que Documentos, para no sumar una séptima pestaña al
+  nav inferior.
 
 ## Fuera de alcance en esta versión
 
