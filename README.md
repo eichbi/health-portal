@@ -133,9 +133,19 @@ actions que revalidan el layout. No hay API REST intermedia.
   Reutilizan el mismo `documents`/Vercel Blob de la sección Documentos con una columna
   `workout_id` nullable, así que heredan el mismo guardarraíl: sin `BLOB_READ_WRITE_TOKEN`
   fallan con el mismo aviso.
+- **La racha cuenta días "completos"**, mismo criterio que el semáforo de Hoy (ningún tile en
+  ámbar, rojo o vacío; descanso cuenta si no hay entreno planeado). Si hoy todavía no está
+  completo no se rompe la racha — sólo no cuenta hasta que lo esté, y el conteo corre desde
+  ayer mientras tanto. Se detiene sola en el primer día sin datos, sin necesitar la fecha de
+  arranque del plan.
+- **Hoy se puede navegar a días pasados** con `/?dia=YYYY-MM-DD`. Sólo el suplementario,
+  sueño, métricas, Omron-del-día y entrenos se re-ancla a ese día; la racha y "última toma de
+  Omron" siguen mirando el día real. El cronómetro en vivo no se ofrece fuera de hoy — no
+  tiene sentido cronometrar un día que ya pasó — pero "Registrar directo" sigue disponible
+  para capturar en retraso.
 
 ## Fuera de alcance en esta versión
 
 Siguen pendientes: **leer resultados desde una foto, un CSV o un PDF subido** (import de
-Withings/SECA era P1), exportación CSV/JSON, racha de días completos, vista imprimible para
-la cita, integraciones con wearables y notificaciones push.
+Withings/SECA era P1), exportación CSV/JSON, vista imprimible para la cita, integraciones con
+wearables y notificaciones push.

@@ -30,12 +30,15 @@ export function PlannedToday({
   labels,
   done,
   extractionDate,
+  isToday = true,
 }: {
   date: string;
   planned: PlannedDay;
   labels: Record<WorkoutType, string>;
   done: boolean;
   extractionDate: string;
+  /** El cronómetro en vivo sólo tiene sentido para el día de hoy. */
+  isToday?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [prefill, setPrefill] = useState<Prefill>(null);
@@ -89,12 +92,13 @@ export function PlannedToday({
     setOpen(true);
   };
 
-  const effectiveType = session?.type ?? (planned !== REST ? planned : undefined);
+  const showSession = isToday && session !== null;
+  const effectiveType = showSession ? session!.type : planned !== REST ? planned : undefined;
   const planSession = planned !== REST ? sessionFor(planned) : null;
 
   return (
     <>
-      {session ? (
+      {showSession ? (
         <div className="card border-brand bg-brand-soft p-4">
           <div className="flex items-center justify-between">
             <p className="text-[13px] font-medium text-ink-soft">
@@ -157,7 +161,9 @@ export function PlannedToday({
             ✳
           </span>
           <div className="min-w-0 flex-1">
-            <p className="font-semibold leading-tight">Hoy toca descanso activo</p>
+            <p className="font-semibold leading-tight">
+              {isToday ? 'Hoy toca descanso activo' : 'Ese día tocaba descanso activo'}
+            </p>
             <p className="text-[13px] text-ink-soft">
               8,000-10,000 pasos. La caminata post-cena cuenta doble.
             </p>
@@ -175,7 +181,7 @@ export function PlannedToday({
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-[13px] font-medium text-ink-soft">
-                {done ? 'Hecho hoy' : 'Hoy toca'}
+                {done ? (isToday ? 'Hecho hoy' : 'Hecho') : isToday ? 'Hoy toca' : 'Tocaba'}
               </p>
               <p className="font-semibold leading-tight">{labels[planned]}</p>
               {planSession && (
@@ -187,7 +193,7 @@ export function PlannedToday({
             </div>
           </div>
 
-          {!done && (
+          {!done && isToday && (
             <button
               type="button"
               onClick={() => startSession(planned)}
