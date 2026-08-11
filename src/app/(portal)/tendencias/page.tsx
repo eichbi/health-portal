@@ -1,16 +1,41 @@
 import { TrendChart } from '@/components/charts/TrendChart';
-import { Card, ScreenHeader } from '@/components/ui';
+import { Card, Empty, ScreenHeader } from '@/components/ui';
 import { formatShort, minutesToHours, todayISO } from '@/lib/date';
+import { ROUNDS_RELEVANT_TYPES } from '@/lib/defaults';
 import { getTrends } from '@/lib/queries/trends';
+import { getRoundsSeries, getVitalsBetween } from '@/lib/queries/vitals';
 import { getSettings } from '@/lib/settings';
 
 export const dynamic = 'force-dynamic';
 
 const WEEKS = 12;
 
+const ROUNDS_COLORS: Record<string, string> = {
+  A: '#4fc3f7',
+  C: '#3ddc84',
+  E: '#f0b429',
+};
+
 export default async function TrendsPage() {
   const today = todayISO();
   const [settings, trends] = await Promise.all([getSettings(), getTrends(today, WEEKS)]);
+  const [vitals, rounds] = await Promise.all([
+    getVitalsBetween(trends.from, trends.to),
+    getRoundsSeries(trends.from, trends.to),
+  ]);
+
+  const systolic = vitals.map((row) => ({
+    label: formatShort(row.date),
+    value: row.systolic,
+  }));
+  const diastolic = vitals.map((row) => ({
+    label: formatShort(row.date),
+    value: row.diastolic,
+  }));
+  const restingHr = vitals.map((row) => ({
+    label: formatShort(row.date),
+    value: row.restingHr,
+  }));
 
   const weight = trends.weight.map((point) => ({
     label: formatShort(point.date),
@@ -56,6 +81,48 @@ export default async function TrendsPage() {
 
       <Card title="Entrenos por semana">
         <TrendChart data={workouts} color="#3ddc84" goal={settings.goalWorkoutsPerWeek} />
+      </Card>
+
+      <Card title="Rondas por sesión">
+        <p className="mb-2 text-[13px] text-ink-soft">
+          El plan progresa agregando 1 ronda, no más peso. Una serie por tipo de circuito.
+        </p>
+        {ROUNDS_RELEVANT_TYPES.filter((type) => type !== 'OTHER').map((type) => {
+          const points = rounds
+            .filter((point) => point.type === type)
+            .map((point) => ({ label: formatShort(point.date), value: point.rounds }));
+          if (points.length === 0) return null;
+          return (
+            <div key={type} className="mt-3">
+              <p className="term-label mb-1">
+                {type} · {settings.workoutLabels[type]}
+              </p>
+              <TrendChart data={points} color={ROUNDS_COLORS[type] ?? '#4fc3f7'} />
+            </div>
+          );
+        })}
+        {rounds.length === 0 && <Empty>Aún no hay sesiones con rondas registradas.</Empty>}
+      </Card>
+
+      <Card title="Omron · presión arterial">
+        {vitals.length === 0 ? (
+          <Empty>Sin tomas registradas. El plan la pide semanal, en ayunas.</Empty>
+        ) : (
+          <>
+            <p className="term-label mb-1">Sistólica</p>
+            <TrendChart data={systolic} unit="mmHg" color="#ff5f56" />
+            <p className="term-label mb-1 mt-3">Diastólica</p>
+            <TrendChart data={diastolic} unit="mmHg" color="#f0b429" />
+          </>
+        )}
+      </Card>
+
+      <Card title="FC en reposo">
+        {vitals.length === 0 ? (
+          <Empty>Sin tomas registradas.</Empty>
+        ) : (
+          <TrendChart data={restingHr} unit="bpm" color="#a78bfa" />
+        )}
       </Card>
 
       <p className="px-1 text-[13px] text-ink-faint">

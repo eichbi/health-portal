@@ -4,15 +4,17 @@ import { useCallback, useState } from 'react';
 import { Sheet } from './Sheet';
 import { MetricsForm } from './forms/MetricsForm';
 import { SleepForm } from './forms/SleepForm';
+import { VitalsForm } from './forms/VitalsForm';
 import { WorkoutForm } from './forms/WorkoutForm';
-import type { DailyMetric, SleepLog, WorkoutType } from '@/db/schema';
+import type { DailyMetric, SleepLog, Vitals, WorkoutType } from '@/db/schema';
 
-type Action = 'workout' | 'sleep' | 'metrics';
+type Action = 'workout' | 'sleep' | 'metrics' | 'vitals';
 
 const TITLES: Record<Action, string> = {
   workout: 'Registrar entreno',
   sleep: 'Registrar sueño de anoche',
   metrics: 'Peso y métricas',
+  vitals: 'Toma de Omron',
 };
 
 export function QuickAdd({
@@ -20,11 +22,15 @@ export function QuickAdd({
   labels,
   sleep,
   metrics,
+  vitals,
+  extractionDate,
 }: {
   date: string;
   labels: Record<WorkoutType, string>;
   sleep: SleepLog | null;
   metrics: DailyMetric | null;
+  vitals: Vitals | null;
+  extractionDate: string;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [action, setAction] = useState<Action | null>(null);
@@ -52,6 +58,7 @@ export function QuickAdd({
                   ['workout', 'Entreno'],
                   ['sleep', 'Sueño'],
                   ['metrics', 'Peso'],
+                  ['vitals', 'Omron'],
                 ] as const
               ).map(([value, label]) => (
                 <button
@@ -82,9 +89,17 @@ export function QuickAdd({
       </div>
 
       <Sheet open={action !== null} title={action ? TITLES[action] : ''} onClose={close}>
-        {action === 'workout' && <WorkoutForm date={date} labels={labels} onDone={close} />}
+        {action === 'workout' && (
+          <WorkoutForm
+            date={date}
+            labels={labels}
+            extractionDate={extractionDate}
+            onDone={close}
+          />
+        )}
         {action === 'sleep' && <SleepForm date={date} sleep={sleep} onDone={close} />}
         {action === 'metrics' && <MetricsForm date={date} metrics={metrics} onDone={close} />}
+        {action === 'vitals' && <VitalsForm date={date} vitals={vitals} onDone={close} />}
       </Sheet>
     </>
   );

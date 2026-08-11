@@ -13,7 +13,12 @@ import {
 } from '../src/lib/date';
 import { DEFAULT_WEEKLY_TEMPLATE, REST } from '../src/lib/defaults';
 import { computeHomaIr, markerTrend, movementGlyph } from '../src/lib/labs';
-import { plannedFor } from '../src/lib/plan';
+import {
+  PLAN_SESSIONS,
+  heartRateVerdict,
+  plannedFor,
+  violatesExtractionQuiet,
+} from '../src/lib/plan';
 import { findSequenceViolations } from '../src/lib/rules';
 import type { WorkoutType } from '../src/db/schema';
 
@@ -101,6 +106,43 @@ test('plannedFor mapea por día de la semana, no por posición', () => {
   assert.equal(plannedFor('2026-08-12', DEFAULT_WEEKLY_TEMPLATE), REST); // miércoles
   assert.equal(plannedFor('2026-08-16', DEFAULT_WEEKLY_TEMPLATE), REST); // domingo
   assert.equal(plannedFor('2026-08-17', DEFAULT_WEEKLY_TEMPLATE), 'A'); // lunes siguiente
+});
+
+test('ventana de silencio: 48h sin nada intenso antes de la extracción', () => {
+  const extraction = '2026-09-11';
+
+  // Dentro de la ventana: los tipos intensos se bloquean.
+  for (const type of ['A', 'C', 'D', 'E'] as WorkoutType[]) {
+    assert.equal(violatesExtractionQuiet('2026-09-09', type, extraction), true, type);
+    assert.equal(violatesExtractionQuiet('2026-09-10', type, extraction), true, type);
+    assert.equal(violatesExtractionQuiet('2026-09-11', type, extraction), true, type);
+  }
+
+  // B es zona 2 a RPE 4-5: prácticamente caminata, no ensucia la toma.
+  assert.equal(violatesExtractionQuiet('2026-09-09', 'B', extraction), false);
+
+  // Fuera de la ventana no se estorba: el 8 el plan sí programa entreno.
+  assert.equal(violatesExtractionQuiet('2026-09-08', 'C', extraction), false);
+  // Y después de la toma tampoco.
+  assert.equal(violatesExtractionQuiet('2026-09-12', 'C', extraction), false);
+});
+
+test('veredicto de zona 2 contra el objetivo del día B', () => {
+  const target = PLAN_SESSIONS.B.hrTarget!;
+  assert.deepEqual({ min: target.min, max: target.max, cap: target.cap }, {
+    min: 113,
+    max: 131,
+    cap: 135,
+  });
+
+  assert.equal(heartRateVerdict(target, 122, 130), 'en-zona');
+  assert.equal(heartRateVerdict(target, 105, 115), 'baja');
+  assert.equal(heartRateVerdict(target, 134, 135), 'alta');
+  // El techo manda sobre la media: pasarlo invalida la sesión como zona 2.
+  assert.equal(heartRateVerdict(target, 120, 148), 'sobre-techo');
+  assert.equal(heartRateVerdict(target, null, null), 'sin-dato');
+  // Los tipos sin objetivo de FC no opinan.
+  assert.equal(heartRateVerdict(PLAN_SESSIONS.A.hrTarget, 150, 170), 'sin-dato');
 });
 
 test('reglas de secuencia: C↔D y A↔E consecutivos (R6)', () => {

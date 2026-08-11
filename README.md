@@ -52,7 +52,7 @@ cerrado y `/login` lo explica: falla cerrado, no abierto.
 | --- | --- |
 | `npm run dev` | Servidor de desarrollo |
 | `npm run build` | Migra la DB y compila para producción |
-| `npm run test` | Pruebas unitarias de la lógica pura (fechas, sueño, HOMA-IR, reglas de secuencia) |
+| `npm run test` | Pruebas de la lógica pura (fechas, sueño, HOMA-IR, secuencia, ventana de extracción, zona 2) |
 | `npm run lint` | ESLint |
 | `npm run db:generate` | Genera una migración SQL nueva tras cambiar `src/db/schema.ts` |
 | `npm run db:migrate` | Aplica migraciones + seed |
@@ -78,7 +78,7 @@ src/
     status.ts            Semáforos del día
     rules.ts             Reglas de secuencia de entrenos
     labs.ts              HOMA-IR y tendencias de marcadores
-    queries/             Lecturas (día, semana, tendencias, labs)
+    queries/             Lecturas (día, semana, tendencias, labs, Omron)
   middleware.ts          Password gate
 tests/                   Pruebas de la lógica pura
 drizzle/                 Migraciones SQL versionadas
@@ -110,7 +110,11 @@ actions que revalidan el layout. No hay API REST intermedia.
   mano, el tuyo manda (R7).
 - **El peso de la vista Tendencias es media móvil de 7 días** para separar ruido de
   tendencia real.
-
+- **El portal defiende la extracción de sangre.** El plan exige 48h sin nada intenso antes de
+  la toma para no ensuciar creatinina y CK. Registrar un entreno A/C/D/E dentro de esa ventana
+  se frena y exige confirmación explícita; B pasa sin estorbar, porque es zona 2 a RPE 4-5.
+- **La FC del entreno se compara contra el plan.** El día B tiene objetivo 113-131 bpm con techo
+  en 135, así que el formulario dice en el momento si la sesión fue zona 2 de verdad.
 - **La estética es de consola:** fondo oscuro, monoespaciada y los colores ANSI de toda la
   vida. Los semáforos caen solos en verde/ámbar/rojo y el cyan queda para lo interactivo.
   El tamaño de tipografía y de área táctil no se tocó — el portal se sigue usando
@@ -122,7 +126,6 @@ actions que revalidan el layout. No hay API REST intermedia.
 
 ## Fuera de alcance en esta versión
 
-P1 y P2 del PRD siguen pendientes: **leer resultados desde una foto, un CSV o un PDF
-subido** (import de Withings/SECA era P1), exportación CSV/JSON, racha de días completos,
-modo oscuro, vista imprimible para la cita, integraciones con wearables, presión arterial y
-notificaciones push.
+Siguen pendientes: **leer resultados desde una foto, un CSV o un PDF subido** (import de
+Withings/SECA era P1), exportación CSV/JSON, racha de días completos, vista imprimible para
+la cita, integraciones con wearables y notificaciones push.
