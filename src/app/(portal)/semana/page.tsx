@@ -139,7 +139,12 @@ export default async function WeekPage({
         {allWorkouts.length === 0 ? (
           <Empty>Nada registrado en esta semana.</Empty>
         ) : (
-          <WorkoutList workouts={allWorkouts} labels={settings.workoutLabels} showDate />
+          <WorkoutList
+            workouts={allWorkouts}
+            labels={settings.workoutLabels}
+            showDate
+            extractionDate={settings.dateExtraction}
+          />
         )}
       </Card>
     </main>

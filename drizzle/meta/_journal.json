@@ -22,6 +22,13 @@
       "when": 1786337536084,
       "tag": "0002_fix_plan_seed",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786411344955,
+      "tag": "0003_vitals_and_workout_hr",
+      "breakpoints": true
     }
   ]
 }

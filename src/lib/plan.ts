@@ -1,5 +1,5 @@
 import type { WorkoutType } from '@/db/schema';
-import { weekdayIndex, type ISODate } from './date';
+import { daysBetween, weekdayIndex, type ISODate } from './date';
 import { REST, type PlannedDay } from './defaults';
 
 /**
@@ -12,6 +12,15 @@ export type Exercise = {
   name: string;
   reps: string;
   load: string;
+  note: string;
+};
+
+/** Rango de FC objetivo de la sesión, cuando el plan lo especifica. */
+export type HeartRateTarget = {
+  min: number;
+  max: number;
+  /** Techo duro: pasarlo significa que la sesión dejó de cumplir su función. */
+  cap: number;
   note: string;
 };
 
@@ -30,6 +39,7 @@ export type PlanSession = {
   blocks?: Array<{ label: string; detail: string }>;
   /** El plan pide registrar rondas en estos días. */
   tracksRounds: boolean;
+  hrTarget?: HeartRateTarget;
 };
 
 export const PLAN_SESSIONS: Record<Exclude<WorkoutType, 'OTHER'>, PlanSession> = {
@@ -87,6 +97,12 @@ export const PLAN_SESSIONS: Record<Exclude<WorkoutType, 'OTHER'>, PlanSession> =
     rpeTarget: '4-5 (hablas en frases completas)',
     nextDay: 'Cualquiera — no genera deuda de recuperación.',
     tracksRounds: false,
+    hrTarget: {
+      min: 113,
+      max: 131,
+      cap: 135,
+      note: 'Si la FC pasa de 135, baja inclinación, no velocidad.',
+    },
     blocks: [
       { label: 'Calentamiento', detail: '5 min progresivo' },
       { label: 'Bloque principal', detail: '32-35 min · inclinación 6-10% · 5.5-6.5 km/h' },
@@ -330,6 +346,49 @@ export function sessionFor(type: WorkoutType): PlanSession | null {
 /** Qué toca ese día según la plantilla semanal (índice 0 = lunes). */
 export function plannedFor(date: ISODate, template: PlannedDay[]): PlannedDay {
   return template[weekdayIndex(date)] ?? REST;
+}
+
+/**
+ * Tipos que el plan considera intensos. B es zona 2 a RPE 4-5, prácticamente
+ * caminata, así que no ensucia la extracción.
+ */
+export const INTENSE_TYPES: WorkoutType[] = ['A', 'C', 'D', 'E'];
+
+/** Horas que el plan exige "limpias" antes de la toma de sangre. */
+export const EXTRACTION_QUIET_HOURS = 48;
+
+/**
+ * ¿Este día cae dentro de la ventana de silencio previa a la extracción?
+ * El plan lo pide explícito: 48h+ sin nada intenso para no ensuciar
+ * creatinina y CK, que es lo que sostiene la lectura de cistatina C.
+ */
+export function isQuietBeforeExtraction(date: ISODate, extraction: ISODate): boolean {
+  const days = daysBetween(date, extraction);
+  return days >= 0 && days <= EXTRACTION_QUIET_HOURS / 24;
+}
+
+export function violatesExtractionQuiet(
+  date: ISODate,
+  type: WorkoutType,
+  extraction: ISODate,
+): boolean {
+  return INTENSE_TYPES.includes(type) && isQuietBeforeExtraction(date, extraction);
+}
+
+/** Compara la FC registrada contra el objetivo de la sesión. */
+export type HeartRateVerdict = 'sin-dato' | 'en-zona' | 'baja' | 'alta' | 'sobre-techo';
+
+export function heartRateVerdict(
+  target: HeartRateTarget | undefined,
+  avgHr: number | null | undefined,
+  maxHr: number | null | undefined,
+): HeartRateVerdict {
+  if (!target) return 'sin-dato';
+  if (maxHr != null && maxHr > target.cap) return 'sobre-techo';
+  if (avgHr == null) return 'sin-dato';
+  if (avgHr < target.min) return 'baja';
+  if (avgHr > target.max) return 'alta';
+  return 'en-zona';
 }
 
 export function phaseFor(date: ISODate): PlanPhase | null {

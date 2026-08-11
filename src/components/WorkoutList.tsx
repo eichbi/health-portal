@@ -13,10 +13,12 @@ export function WorkoutList({
   workouts,
   labels,
   showDate = false,
+  extractionDate,
 }: {
   workouts: Workout[];
   labels: Record<WorkoutType, string>;
   showDate?: boolean;
+  extractionDate?: string;
 }) {
   const [editing, setEditing] = useState<Workout | null>(null);
   const [deleting, setDeleting] = useState<Workout | null>(null);
@@ -43,6 +45,7 @@ export function WorkoutList({
                 {workout.durationMin} min
                 {workout.rpe != null && ` · RPE ${workout.rpe}`}
                 {workout.rounds != null && ` · ${workout.rounds} rondas`}
+                {workout.avgHr != null && ` · ${workout.avgHr} bpm`}
               </p>
               {workout.notes && (
                 <p className="mt-1 text-[13px] text-ink-faint">{workout.notes}</p>
@@ -75,6 +78,7 @@ export function WorkoutList({
             date={editing.date}
             labels={labels}
             workout={editing}
+            extractionDate={extractionDate}
             onDone={() => setEditing(null)}
           />
         )}

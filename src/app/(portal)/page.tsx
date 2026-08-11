@@ -3,10 +3,12 @@ import { DayTiles } from '@/components/DayTiles';
 import { PlannedToday } from '@/components/PlannedToday';
 import { QuickAdd } from '@/components/QuickAdd';
 import { SupplementChecklist } from '@/components/SupplementChecklist';
+import { VitalsCard } from '@/components/VitalsCard';
 import { WorkoutList } from '@/components/WorkoutList';
 import { BlockMeter, Card, ScreenHeader } from '@/components/ui';
 import { endOfWeek, formatFull, startOfWeek, todayISO } from '@/lib/date';
 import { countWorkoutDays, getDay } from '@/lib/queries/day';
+import { getLatestVitals, getVitalsForDate } from '@/lib/queries/vitals';
 import { plannedFor } from '@/lib/plan';
 import { getSettings } from '@/lib/settings';
 import { buildDayTiles } from '@/lib/status';
@@ -15,7 +17,12 @@ export const dynamic = 'force-dynamic';
 
 export default async function TodayPage() {
   const today = todayISO();
-  const [settings, day] = await Promise.all([getSettings(), getDay(today)]);
+  const [settings, day, vitals, latestVitals] = await Promise.all([
+    getSettings(),
+    getDay(today),
+    getVitalsForDate(today),
+    getLatestVitals(),
+  ]);
   const weekFrom = startOfWeek(today);
   const trainedThisWeek = await countWorkoutDays(weekFrom, endOfWeek(today));
 
@@ -38,6 +45,7 @@ export default async function TodayPage() {
         planned={planned}
         labels={settings.workoutLabels}
         done={plannedDone}
+        extractionDate={settings.dateExtraction}
       />
 
       <DayTiles tiles={tiles} />
@@ -71,8 +79,16 @@ export default async function TodayPage() {
         <SupplementChecklist date={today} supplements={day.supplements} />
       </Card>
 
+      <Card title="Omron">
+        <VitalsCard today={today} latest={latestVitals} />
+      </Card>
+
       <Card title="Entrenos de hoy">
-        <WorkoutList workouts={day.workouts} labels={settings.workoutLabels} />
+        <WorkoutList
+          workouts={day.workouts}
+          labels={settings.workoutLabels}
+          extractionDate={settings.dateExtraction}
+        />
       </Card>
 
       <QuickAdd
@@ -80,6 +96,8 @@ export default async function TodayPage() {
         labels={settings.workoutLabels}
         sleep={day.sleep}
         metrics={day.metrics}
+        vitals={vitals}
+        extractionDate={settings.dateExtraction}
       />
     </main>
   );

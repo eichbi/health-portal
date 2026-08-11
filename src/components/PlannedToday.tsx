@@ -17,11 +17,13 @@ export function PlannedToday({
   planned,
   labels,
   done,
+  extractionDate,
 }: {
   date: string;
   planned: PlannedDay;
   labels: Record<WorkoutType, string>;
   done: boolean;
+  extractionDate: string;
 }) {
   const [open, setOpen] = useState(false);
   const close = useCallback(() => setOpen(false), []);
@@ -88,7 +90,13 @@ export function PlannedToday({
       </div>
 
       <Sheet open={open} title={`Registrar ${planned}`} onClose={close}>
-        <WorkoutForm date={date} labels={labels} initialType={planned} onDone={close} />
+        <WorkoutForm
+          date={date}
+          labels={labels}
+          initialType={planned}
+          extractionDate={extractionDate}
+          onDone={close}
+        />
       </Sheet>
     </>
   );

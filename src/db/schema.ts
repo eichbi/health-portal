@@ -25,9 +25,30 @@ export const workouts = pgTable('workouts', {
   durationMin: integer('duration_min').notNull(),
   rpe: integer('rpe'),
   rounds: integer('rounds'),
+  /** FC media y máxima de la sesión: sin ellas no se puede verificar la zona 2. */
+  avgHr: integer('avg_hr'),
+  maxHr: integer('max_hr'),
   notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * Toma del Omron: el plan la pide semanal, mismo día, misma hora y en ayunas.
+ * Va aparte de daily_metrics porque su cadencia no es diaria.
+ */
+export const vitals = pgTable(
+  'vitals',
+  {
+    id: serial('id').primaryKey(),
+    date: date('date').notNull(),
+    systolic: integer('systolic'),
+    diastolic: integer('diastolic'),
+    restingHr: integer('resting_hr'),
+    notes: text('notes'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex('vitals_date_key').on(t.date)],
+);
 
 /**
  * Un registro de sueño por día (el sueño "de anoche" que cierra ese día).
@@ -156,3 +177,4 @@ export type LabPanel = typeof labPanels.$inferSelect;
 export type LabResult = typeof labResults.$inferSelect;
 export type SecaMeasurement = typeof secaMeasurements.$inferSelect;
 export type StoredDocument = typeof documents.$inferSelect;
+export type Vitals = typeof vitals.$inferSelect;
