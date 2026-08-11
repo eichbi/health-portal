@@ -22,6 +22,7 @@ import {
 } from '../src/lib/plan';
 import { elapsedMinutes } from '../src/lib/liveWorkout';
 import { findSequenceViolations } from '../src/lib/rules';
+import { computeStreak } from '../src/lib/streak';
 import type { WorkoutType } from '../src/db/schema';
 
 test('sueño cruzando medianoche: 23:45 → 06:03 = 6h18 (R2)', () => {
@@ -119,6 +120,36 @@ test('formatElapsed: mm:ss bajo una hora, h:mm:ss encima', () => {
   assert.equal(formatElapsed(3665), '1:01:05');
   // Nunca negativo, aunque el reloj del cliente se desfase.
   assert.equal(formatElapsed(-5), '0:00');
+});
+
+test('computeStreak cuenta hacia atrás y se detiene en el primer día incompleto', () => {
+  const complete = new Set(['2026-08-08', '2026-08-09', '2026-08-10']);
+  assert.equal(
+    computeStreak('2026-08-10', (d) => complete.has(d)),
+    3,
+  );
+
+  // Un hueco en medio corta la racha ahí, no cuenta lo de más atrás.
+  const withGap = new Set(['2026-08-05', '2026-08-09', '2026-08-10']);
+  assert.equal(
+    computeStreak('2026-08-10', (d) => withGap.has(d)),
+    2,
+  );
+});
+
+test('computeStreak: hoy incompleto no rompe la racha, sólo no cuenta todavía', () => {
+  const complete = new Set(['2026-08-08', '2026-08-09']); // hoy (10) no está
+  assert.equal(
+    computeStreak('2026-08-10', (d) => complete.has(d)),
+    2,
+  );
+});
+
+test('computeStreak: sin ningún día completo, la racha es 0', () => {
+  assert.equal(
+    computeStreak('2026-08-10', () => false),
+    0,
+  );
 });
 
 test('elapsedMinutes redondea y nunca da un entreno de 0 minutos', () => {
