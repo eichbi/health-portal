@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from 'react';
 import { deleteWorkout } from '@/actions/workouts';
 import { Sheet } from './Sheet';
 import { WorkoutForm } from './forms/WorkoutForm';
+import { WorkoutPhotos } from './WorkoutPhotos';
 import { FormError, SubmitButton } from './form';
 import type { ActionState } from '@/lib/validation';
 import type { Workout, WorkoutType } from '@/db/schema';
@@ -74,13 +75,16 @@ export function WorkoutList({
 
       <Sheet open={editing !== null} title="Editar entreno" onClose={() => setEditing(null)}>
         {editing && (
-          <WorkoutForm
-            date={editing.date}
-            labels={labels}
-            workout={editing}
-            extractionDate={extractionDate}
-            onDone={() => setEditing(null)}
-          />
+          <div className="flex flex-col gap-4">
+            <WorkoutForm
+              date={editing.date}
+              labels={labels}
+              workout={editing}
+              extractionDate={extractionDate}
+              onDone={() => setEditing(null)}
+            />
+            <WorkoutPhotos workoutId={editing.id} />
+          </div>
         )}
       </Sheet>
 

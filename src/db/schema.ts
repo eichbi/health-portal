@@ -165,6 +165,8 @@ export const documents = pgTable('documents', {
   blobPathname: text('blob_pathname').notNull(),
   docDate: date('doc_date'),
   notes: text('notes'),
+  /** Si no es null, es una foto de evidencia de ese entreno, no un documento general. */
+  workoutId: integer('workout_id').references(() => workouts.id, { onDelete: 'cascade' }),
   uploadedAt: timestamp('uploaded_at', { withTimezone: true }).notNull().defaultNow(),
 });
 

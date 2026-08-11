@@ -123,6 +123,16 @@ actions que revalidan el layout. No hay API REST intermedia.
   `access: 'private'`, así que su URL de almacenamiento no responde sin el token del store;
   y el navegador ni siquiera la ve, porque sólo recibe `/api/documentos/<id>`, una ruta que
   pasa por el middleware de sesión.
+- **El cronómetro vive en localStorage, no en la base de datos.** Es efímero — sólo existe
+  mientras entrenas — y se mide por diferencia de timestamps (`Date.now() - startedAt`), no
+  por un contador en memoria, así que sobrevive a que el teléfono se bloquee o la pestaña se
+  vaya a segundo plano. El contador de rondas en vivo sólo aparece en el tipo E: en los
+  circuitos de 4 rondas fijas (A, C) teclear el número al final es más rápido que ir tocando
+  "+1", pero en el AMRAP de 30 min contar de memoria sí es la fricción real.
+- **Las fotos de evidencia sólo se adjuntan a un entreno ya guardado**, no durante el alta.
+  Reutilizan el mismo `documents`/Vercel Blob de la sección Documentos con una columna
+  `workout_id` nullable, así que heredan el mismo guardarraíl: sin `BLOB_READ_WRITE_TOKEN`
+  fallan con el mismo aviso.
 
 ## Fuera de alcance en esta versión
 

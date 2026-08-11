@@ -29,6 +29,13 @@
       "when": 1786411344955,
       "tag": "0003_vitals_and_workout_hr",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786415411802,
+      "tag": "0004_workout_photos",
+      "breakpoints": true
     }
   ]
 }

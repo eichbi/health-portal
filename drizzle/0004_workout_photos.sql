@@ -1,0 +1,2 @@
+ALTER TABLE "documents" ADD COLUMN "workout_id" integer;--> statement-breakpoint
+ALTER TABLE "documents" ADD CONSTRAINT "documents_workout_id_workouts_id_fk" FOREIGN KEY ("workout_id") REFERENCES "public"."workouts"("id") ON DELETE cascade ON UPDATE no action;
