@@ -4,6 +4,7 @@ import {
   addDays,
   daysBetween,
   formatDuration,
+  formatElapsed,
   isISODate,
   parseHHMM,
   sleepDurationMin,
@@ -19,6 +20,7 @@ import {
   plannedFor,
   violatesExtractionQuiet,
 } from '../src/lib/plan';
+import { elapsedMinutes } from '../src/lib/liveWorkout';
 import { findSequenceViolations } from '../src/lib/rules';
 import type { WorkoutType } from '../src/db/schema';
 
@@ -106,6 +108,24 @@ test('plannedFor mapea por día de la semana, no por posición', () => {
   assert.equal(plannedFor('2026-08-12', DEFAULT_WEEKLY_TEMPLATE), REST); // miércoles
   assert.equal(plannedFor('2026-08-16', DEFAULT_WEEKLY_TEMPLATE), REST); // domingo
   assert.equal(plannedFor('2026-08-17', DEFAULT_WEEKLY_TEMPLATE), 'A'); // lunes siguiente
+});
+
+test('formatElapsed: mm:ss bajo una hora, h:mm:ss encima', () => {
+  assert.equal(formatElapsed(0), '0:00');
+  assert.equal(formatElapsed(65), '1:05');
+  assert.equal(formatElapsed(600), '10:00');
+  assert.equal(formatElapsed(3599), '59:59');
+  assert.equal(formatElapsed(3600), '1:00:00');
+  assert.equal(formatElapsed(3665), '1:01:05');
+  // Nunca negativo, aunque el reloj del cliente se desfase.
+  assert.equal(formatElapsed(-5), '0:00');
+});
+
+test('elapsedMinutes redondea y nunca da un entreno de 0 minutos', () => {
+  const started = { type: 'A' as WorkoutType, startedAt: 0, rounds: 0 };
+  assert.equal(elapsedMinutes(started, 40 * 60_000), 40);
+  assert.equal(elapsedMinutes(started, 90_000), 2); // 1.5 min redondea a 2
+  assert.equal(elapsedMinutes(started, 10_000), 1); // 10s no se guarda como 0
 });
 
 test('ventana de silencio: 48h sin nada intenso antes de la extracción', () => {

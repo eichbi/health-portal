@@ -23,6 +23,8 @@ export function WorkoutForm({
   workout,
   initialType,
   extractionDate,
+  prefillDurationMin,
+  prefillRounds,
   onDone,
 }: {
   date: string;
@@ -32,6 +34,10 @@ export function WorkoutForm({
   initialType?: WorkoutType;
   /** Para avisar antes de guardar algo intenso cerca de la toma de sangre. */
   extractionDate?: string;
+  /** Del cronómetro en vivo: duración medida, no estimada. */
+  prefillDurationMin?: number;
+  /** Del contador en vivo, sólo aplica a AMRAP (tipo E). */
+  prefillRounds?: number;
   onDone?: () => void;
 }) {
   const [state, formAction] = useActionState<ActionState, FormData>(saveWorkout, {});
@@ -107,7 +113,10 @@ export function WorkoutForm({
         </div>
       </div>
 
-      <Field label="Duración (min)">
+      <Field
+        label="Duración (min)"
+        hint={prefillDurationMin != null ? 'Del cronómetro, ajústala si hace falta' : undefined}
+      >
         <TextInput
           type="number"
           name="durationMin"
@@ -115,7 +124,7 @@ export function WorkoutForm({
           min={1}
           max={600}
           /* Todas las sesiones del plan son de 40 min. */
-          defaultValue={workout?.durationMin ?? 40}
+          defaultValue={workout?.durationMin ?? prefillDurationMin ?? 40}
           required
         />
       </Field>
@@ -197,9 +206,11 @@ export function WorkoutForm({
         <Field
           label="Rondas completadas"
           hint={
-            type === 'E'
-              ? 'AMRAP de 30 min — es la métrica de progreso semana a semana'
-              : 'El plan marca 4 rondas'
+            prefillRounds != null
+              ? 'Del contador en vivo, ajústala si hace falta'
+              : type === 'E'
+                ? 'AMRAP de 30 min — es la métrica de progreso semana a semana'
+                : 'El plan marca 4 rondas'
           }
         >
           <TextInput
@@ -209,7 +220,7 @@ export function WorkoutForm({
             min={0}
             max={100}
             placeholder={type === 'E' ? '' : '4'}
-            defaultValue={workout?.rounds ?? ''}
+            defaultValue={workout?.rounds ?? prefillRounds ?? ''}
           />
         </Field>
       )}
