@@ -82,7 +82,6 @@ export function WorkoutPhotos({ workoutId }: { workoutId: number }) {
             type="file"
             name="file"
             accept="image/*"
-            capture="environment"
             className="sr-only"
             onChange={() => formRef.current?.requestSubmit()}
           />
