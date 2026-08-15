@@ -36,30 +36,19 @@ export function PlanSessionCard({
           <p className="mt-3 rounded-md bg-idle-bg px-3 py-2 text-[14px]">{session.format}</p>
 
           {session.exercises && (
-            <div className="-mx-4 mt-3 overflow-x-auto px-4">
-              <table className="w-full min-w-max border-collapse text-[14px]">
-                <thead>
-                  <tr className="border-b border-line text-left text-ink-soft">
-                    <th className="py-2 pr-3 font-semibold">Ejercicio</th>
-                    <th className="px-3 py-2 font-semibold">Reps</th>
-                    <th className="px-3 py-2 font-semibold">Carga</th>
-                    <th className="py-2 pl-3 font-semibold">Nota técnica</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {session.exercises.map((exercise) => (
-                    <tr key={exercise.name} className="border-b border-line last:border-b-0">
-                      <th scope="row" className="py-2 pr-3 text-left font-medium">
-                        {exercise.name}
-                      </th>
-                      <td className="px-3 py-2 whitespace-nowrap tabular-nums">{exercise.reps}</td>
-                      <td className="px-3 py-2 whitespace-nowrap">{exercise.load}</td>
-                      <td className="py-2 pl-3 text-ink-soft">{exercise.note || '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ul className="mt-3 flex flex-col gap-2">
+              {session.exercises.map((exercise) => (
+                <li key={exercise.name} className="rounded-md border border-line px-3 py-2">
+                  <p className="font-semibold leading-snug">{exercise.name}</p>
+                  <p className="mt-1 text-[13px] text-ink-soft">
+                    <span className="tabular-nums">{exercise.reps}</span>
+                    <span className="text-ink-faint"> · </span>
+                    {exercise.load}
+                  </p>
+                  {exercise.note && <p className="mt-1 text-[13px] text-ink-faint">{exercise.note}</p>}
+                </li>
+              ))}
+            </ul>
           )}
 
           {session.blocks && (
